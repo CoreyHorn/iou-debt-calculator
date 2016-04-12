@@ -39,6 +39,8 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     /**
      * Variables related to the Transaction table.
      */
+    private static final String TABLE_TRANSACTIONS = "table_transactions";
+    private static final String FIELD_ACCOUNT_ID = "accountId";
     private static final String FIELD_AMOUNT = "amount";
     private static final String FIELD_POST_CONVERSION_AMOUNT = "postConversionAmount";
 
@@ -48,7 +50,32 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        String createAccountsTableSQL =
+                "CREATE TABLE " + TABLE_ACCOUNTS + " ("
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + FIELD_CURRENT_BALANCE + " TEXT NOT NULL, "
+                + FIELD_CURRENCY_CODE + " TEXT NOT NULL, "
+                + FIELD_NAME + " TEXT NOT NULL, "
+                + FIELD_IMAGE_URI + " TEXT, "
+                + FIELD_DESCRIPTION + " TEXT, "
+                + FIELD_CREATED_TIMESTAMP + " INTEGER NOT NULL, "
+                + FIELD_DUE_DATE_TIMESTAMP + " INTEGER, "
+                + FIELD_DELETED + " INTEGER NOT NULL)";
 
+        String createTransactionsTableSQL =
+                "CREATE TABLE " + TABLE_TRANSACTIONS + " ("
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + FIELD_ACCOUNT_ID + " INTEGER NOT NULL, "
+                + FIELD_AMOUNT + " TEXT NOT NULL, "
+                + FIELD_CURRENCY_CODE + " TEXT NOT NULL, "
+                + FIELD_POST_CONVERSION_AMOUNT + " TEXT NOT NULL, "
+                + FIELD_CREATED_TIMESTAMP + " INTEGER NOT NULL, "
+                + FIELD_DELETED + " INTEGER)";
+
+        db.beginTransaction();
+        db.execSQL(createAccountsTableSQL);
+        db.execSQL(createTransactionsTableSQL);
+        db.endTransaction();
     }
 
     @Override
