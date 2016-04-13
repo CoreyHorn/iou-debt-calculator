@@ -3,15 +3,19 @@ package com.ioudebtcalculator.repository.sqlite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 
 import com.ioudebtcalculator.models.Account;
 import com.ioudebtcalculator.models.Transaction;
 import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.DataRepositoryListener;
 
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
+
+    private AtomicInteger openReferenceCount = new AtomicInteger(0);
+    private SQLiteDatabase database;
 
     /**
      * Variables related to the database as a whole.
@@ -84,6 +88,17 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
 
     }
 
+    public synchronized SQLiteDatabase openDatabase() {
+        if (openReferenceCount.incrementAndGet() == 1)
+            database = getWritableDatabase();
+        return database;
+    }
+
+    public synchronized void closeDatabase() {
+        if (openReferenceCount.decrementAndGet() == 0)
+            database.close();
+    }
+
     /**
      * Returns a list of all Account objects in the database.
      * @param listener listener to return result through.
@@ -91,7 +106,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     @Override
     public void getAccounts(DataRepositoryListener listener) {
         String query = "SELECT * FROM " + TABLE_ACCOUNTS;
-        new QueryAccountsTask(listener).execute(query);
+        new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 
     /**
@@ -105,7 +120,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
         String query = "SELECT * FROM " + TABLE_ACCOUNTS + " WHERE "
                 + FIELD_NAME + " LIKE '%" + searchString + "%' OR "
                 + FIELD_DESCRIPTION + " LIKE '%" + searchString + "%'";
-        new QueryAccountsTask(listener).execute(query);
+        new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 
     /**
@@ -117,7 +132,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     public void getAccount(int accountId, DataRepositoryListener listener) {
         String query = "SELECT * FROM " + TABLE_ACCOUNTS + " WHERE "
                 + KEY_ID + " = " + String.valueOf(accountId);
-        new QueryAccountsTask(listener).execute(query);
+        new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 
     /**
@@ -127,7 +142,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     @Override
     public void setAccountBalance(Account account, String newBalance) {
         account.setCurrentBalance(newBalance);
-        new UpdateAccountsTask().execute(account);
+        new UpdateAccountsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 
     /**
@@ -137,7 +152,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     @Override
     public void deleteAccount(Account account) {
         account.setDeleted(true);
-        new UpdateAccountsTask().execute(account);
+        new UpdateAccountsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 
     /**
@@ -146,7 +161,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
      */
     @Override
     public void saveAccount(Account account) {
-        new InsertAccountsTask().execute(account);
+        new InsertAccountsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, account);
     }
 
     /**
@@ -158,7 +173,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     public void getTransactions(int accountId, DataRepositoryListener listener) {
         String query = "SELECT * FROM " + TABLE_TRANSACTIONS + " WHERE "
                 + FIELD_ACCOUNT_ID + " = " + String.valueOf(accountId);
-        new QueryTransactionsTask(listener).execute(query);
+        new QueryTransactionsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 
     /**
@@ -170,7 +185,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     public void getTransaction(int transactionId, DataRepositoryListener listener) {
         String query = "SELECT * FROM " + TABLE_TRANSACTIONS + " WHERE "
                 + KEY_ID + " = " + String.valueOf(transactionId);
-        new QueryTransactionsTask(listener).execute(query);
+        new QueryTransactionsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 
     /**
@@ -179,6 +194,6 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
      */
     @Override
     public void saveTransaction(Transaction transaction) {
-        new InsertTransactionsTask().execute(transaction);
+        new InsertTransactionsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, transaction);
     }
 }

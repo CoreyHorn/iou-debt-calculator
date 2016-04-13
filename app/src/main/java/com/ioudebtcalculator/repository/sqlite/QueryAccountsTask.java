@@ -16,7 +16,7 @@ import javax.inject.Inject;
 public class QueryAccountsTask extends AsyncTask<String, Void, List<Account>> {
 
     @Inject
-    SQLiteDatabase database;
+    SQLiteImpl sqLite;
 
     private DataRepositoryListener listener;
 
@@ -28,6 +28,7 @@ public class QueryAccountsTask extends AsyncTask<String, Void, List<Account>> {
     @Override
     protected List<Account> doInBackground(String... queries) {
         List<Account> accounts = new ArrayList<>();
+        SQLiteDatabase database = sqLite.openDatabase();
         database.beginTransaction();
         for (String query : queries) {
             Cursor cursor = database.rawQuery(query, null);
@@ -67,6 +68,7 @@ public class QueryAccountsTask extends AsyncTask<String, Void, List<Account>> {
             cursor.close();
         }
         database.endTransaction();
+        sqLite.closeDatabase();
         return accounts;
     }
 

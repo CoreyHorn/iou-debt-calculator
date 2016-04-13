@@ -11,7 +11,7 @@ import javax.inject.Inject;
 public class InsertAccountsTask extends AsyncTask<Account, Void, Void> {
 
     @Inject
-    SQLiteDatabase database;
+    SQLiteImpl sqLite;
 
     public InsertAccountsTask() {
         App.getInstance().getAppComponent().inject(this);
@@ -19,11 +19,13 @@ public class InsertAccountsTask extends AsyncTask<Account, Void, Void> {
 
     @Override
     protected Void doInBackground(Account... accounts) {
+        SQLiteDatabase database = sqLite.openDatabase();
         database.beginTransaction();
         for (Account account : accounts) {
             database.insert(SQLiteImpl.TABLE_ACCOUNTS, null, account.getContentValues());
         }
         database.endTransaction();
+        sqLite.closeDatabase();
         return null;
     }
 }
