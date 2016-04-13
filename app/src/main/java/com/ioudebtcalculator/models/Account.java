@@ -1,5 +1,9 @@
 package com.ioudebtcalculator.models;
 
+import android.content.ContentValues;
+
+import com.ioudebtcalculator.repository.sqlite.SQLiteImpl;
+
 public class Account {
 
     private int id;
@@ -10,7 +14,7 @@ public class Account {
     private String description;
     private long createdTimestamp;
     private long dueDateTimestamp;
-    private boolean deleted;
+    private boolean deleted = false;
 
     public Account(String currentBalance, String currencyCode, String name, String imageUri,
                    String description, long createdTimestamp, long dueDateTimestamp) {
@@ -21,7 +25,28 @@ public class Account {
         this.description = description;
         this.createdTimestamp = createdTimestamp;
         this.dueDateTimestamp = dueDateTimestamp;
-        this.deleted = false;
+    }
+
+    public Account(int id, String currentBalance, String currencyCode, String name, String imageUri,
+                   String description, long createdTimestamp, long dueDateTimestamp,
+                   boolean deleted) {
+        this.id = id;
+        this.currentBalance = currentBalance;
+        this.currencyCode = currencyCode;
+        this.name = name;
+        this.imageUri = imageUri;
+        this.description = description;
+        this.createdTimestamp = createdTimestamp;
+        this.dueDateTimestamp = dueDateTimestamp;
+        this.deleted = deleted;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCurrentBalance() {
@@ -86,5 +111,19 @@ public class Account {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public ContentValues getContentValues() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(SQLiteImpl.FIELD_CURRENT_BALANCE, getCurrentBalance());
+        contentValues.put(SQLiteImpl.FIELD_CURRENCY_CODE, getCurrencyCode());
+        contentValues.put(SQLiteImpl.FIELD_NAME, getName());
+        contentValues.put(SQLiteImpl.FIELD_IMAGE_URI, getImageUri());
+        contentValues.put(SQLiteImpl.FIELD_DESCRIPTION, getDescription());
+        contentValues.put(SQLiteImpl.FIELD_CREATED_TIMESTAMP, getCreatedTimestamp());
+        contentValues.put(SQLiteImpl.FIELD_DUE_DATE_TIMESTAMP, getDueDateTimestamp());
+        //TODO: May need to refactor this next line based on boolean handling.
+        contentValues.put(SQLiteImpl.FIELD_DELETED, isDeleted());
+        return contentValues;
     }
 }

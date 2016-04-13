@@ -1,12 +1,13 @@
-package com.ioudebtcalculator.repository;
+package com.ioudebtcalculator.repository.sqlite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.ContactsContract;
 
 import com.ioudebtcalculator.models.Account;
 import com.ioudebtcalculator.models.Transaction;
+import com.ioudebtcalculator.repository.DataRepository;
+import com.ioudebtcalculator.repository.DataRepositoryListener;
 
 import java.util.List;
 
@@ -21,28 +22,28 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     /**
      * Variables related to both tables within the database.
      */
-    private static final String KEY_ID = "key_id";
-    private static final String FIELD_CREATED_TIMESTAMP = "createdTimestamp";
-    private static final String FIELD_CURRENCY_CODE = "currencyCode";
-    private static final String FIELD_DELETED = "deleted";
+    public static final String KEY_ID = "key_id";
+    public static final String FIELD_CREATED_TIMESTAMP = "createdTimestamp";
+    public static final String FIELD_CURRENCY_CODE = "currencyCode";
+    public static final String FIELD_DELETED = "deleted";
 
     /**
      * Variables related to the Account table.
      */
-    private static final String TABLE_ACCOUNTS = "table_accounts";
-    private static final String FIELD_CURRENT_BALANCE = "currentBalance";
-    private static final String FIELD_NAME = "accountName";
-    private static final String FIELD_IMAGE_URI = "imageUri";
-    private static final String FIELD_DESCRIPTION = "description";
-    private static final String FIELD_DUE_DATE_TIMESTAMP = "dueDateTimestamp";
+    public static final String TABLE_ACCOUNTS = "table_accounts";
+    public static final String FIELD_CURRENT_BALANCE = "currentBalance";
+    public static final String FIELD_NAME = "accountName";
+    public static final String FIELD_IMAGE_URI = "imageUri";
+    public static final String FIELD_DESCRIPTION = "description";
+    public static final String FIELD_DUE_DATE_TIMESTAMP = "dueDateTimestamp";
 
     /**
      * Variables related to the Transaction table.
      */
-    private static final String TABLE_TRANSACTIONS = "table_transactions";
-    private static final String FIELD_ACCOUNT_ID = "accountId";
-    private static final String FIELD_AMOUNT = "amount";
-    private static final String FIELD_POST_CONVERSION_AMOUNT = "postConversionAmount";
+    public static final String TABLE_TRANSACTIONS = "table_transactions";
+    public static final String FIELD_ACCOUNT_ID = "accountId";
+    public static final String FIELD_AMOUNT = "amount";
+    public static final String FIELD_POST_CONVERSION_AMOUNT = "postConversionAmount";
 
     public SQLiteImpl(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -85,51 +86,58 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
 
     /**
      * Returns a list of all Account objects in the database.
-     * @return List of all accounts.
+     * @param listener listener to return result through.
      */
     @Override
-    public List<Account> getAccounts() {
-        return null;
+    public void getAccounts(DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
+        new QueryAccountsTask(listener).execute(query);
     }
 
     /**
      * Returns a list of Account objects containing the searchString in either the description
      * or name.
      * @param searchString string of characters to search for.
-     * @return List of matching accounts.
+     * @param listener listener to return result through.
      */
     @Override
-    public List<Account> getAccountsBySearch(String searchString) {
-        return null;
+    public void getAccountsBySearch(String searchString, DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS + " WHERE "
+                + FIELD_NAME + " LIKE '%" + searchString + "%' OR "
+                + FIELD_DESCRIPTION + " LIKE '%" + searchString + "%'";
+        new QueryAccountsTask(listener).execute(query);
     }
 
     /**
      * Gets an account by account id.
      * @param accountId accountId to get.
-     * @return matching Account object.
+     * @param listener listener to return result through.
      */
     @Override
-    public Account getAccount(int accountId) {
-        return null;
+    public void getAccount(int accountId, DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS + " WHERE "
+                + KEY_ID + " = " + String.valueOf(accountId);
+        new QueryAccountsTask(listener).execute(query);
     }
 
     /**
      * Changes an Account objects balance within the database.
-     * @param accountId accountId of Account to change.
-     * @param newBalance new balance of Account object.
+     * @param account account with updated values.
      */
     @Override
-    public void setAccountBalance(int accountId, String newBalance) {
-
+    public void setAccountBalance(Account account, String newBalance) {
+        account.setCurrentBalance(newBalance);
+        new UpdateAccountsTask().execute(account);
     }
 
     /**
      * Marks an account as deleted in the database.
-     * @param accountId accountId to mark as deleted.
+     * @param account account to delete.
      */
     @Override
-    public void deleteAccount(int accountId) {
-
+    public void deleteAccount(Account account) {
+        account.setDeleted(true);
+        new UpdateAccountsTask().execute(account);
     }
 
     /**
@@ -138,27 +146,31 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
      */
     @Override
     public void saveAccount(Account account) {
-
+        new InsertAccountsTask().execute(account);
     }
 
     /**
      * Get a list of Transaction objects related to given account.
      * @param accountId accountId to retrieve transactions for.
-     * @return List of matching Transaction objects.
+     * @param listener listener to return result through.
      */
     @Override
-    public List<Transaction> getTransactions(int accountId) {
-        return null;
+    public void getTransactions(int accountId, DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_TRANSACTIONS + " WHERE "
+                + FIELD_ACCOUNT_ID + " = " + String.valueOf(accountId);
+        new QueryTransactionsTask(listener).execute(query);
     }
 
     /**
      * Get a Transaction object with the given transactionId.
      * @param transactionId transactionId to get.
-     * @return matching Transaction object.
+     * @param listener listener to return result through.
      */
     @Override
-    public Transaction getTransaction(int transactionId) {
-        return null;
+    public void getTransaction(int transactionId, DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_TRANSACTIONS + " WHERE "
+                + KEY_ID + " = " + String.valueOf(transactionId);
+        new QueryTransactionsTask(listener).execute(query);
     }
 
     /**
@@ -167,6 +179,6 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
      */
     @Override
     public void saveTransaction(Transaction transaction) {
-
+        new InsertTransactionsTask().execute(transaction);
     }
 }

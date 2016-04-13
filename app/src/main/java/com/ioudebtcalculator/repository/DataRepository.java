@@ -6,14 +6,14 @@ import com.ioudebtcalculator.models.Transaction;
 import java.util.List;
 
 public interface DataRepository {
-    List<Account> getAccounts();
-    List<Account> getAccountsBySearch(String searchString);
-    Account getAccount(int accountId);
-    void setAccountBalance(int accountId, String newBalance);
-    void deleteAccount(int accountId);
+    void getAccounts(DataRepositoryListener listener);
+    void getAccountsBySearch(String searchString, DataRepositoryListener listener);
+    void getAccount(int accountId, DataRepositoryListener listener);
+    void setAccountBalance(Account account, String newBalance);
+    void deleteAccount(Account account);
     void saveAccount(Account account);
 
-    List<Transaction> getTransactions(int accountId);
-    Transaction getTransaction(int transactionId);
+    void getTransactions(int accountId, DataRepositoryListener listener);
+    void getTransaction(int transactionId, DataRepositoryListener listener);
     void saveTransaction(Transaction transaction);
 }
