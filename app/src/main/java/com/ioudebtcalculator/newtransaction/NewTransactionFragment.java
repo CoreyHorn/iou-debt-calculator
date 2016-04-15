@@ -1,36 +1,34 @@
 package com.ioudebtcalculator.newtransaction;
 
-import android.accounts.AccountManager;
 import android.app.Fragment;
-
-import com.ioudebtcalculator.models.AccountMetadata;
-
-import java.util.List;
+import android.os.Bundle;
 
 public class NewTransactionFragment extends Fragment implements NewTransactionView {
 
-    private List<AccountMetadata> accountMetadataList;
+    public static final String KEY_ACCOUNT_ID = "accountId";
 
     /**
-     * Pass a bundle into the Fragment possibly containing an Account name and id.
-     * If it contains the appropriate values, use those to fill in the appropriate fields
-     * with the default information.
-     * Otherwise, reach out to the presenter to grab a list of accounts to display.
-     *
-     * The issue with this approach is that we only need Account names and ids in this class.
-     * Possible solutions are:
-     * -Grab the account from the presenter when the fragment is started with default values.
-     * --Shitty because of unnecessary database access.
-     *
-     * -Create a custom object only containing the account name and Id and store a list of those.
-     * --Shitty because of unnecessary object creation. (No actual extra objects in memory)
-     *^^^ Attempting this for now ^^^
-     *
-     * -Store a map of account Id to name.
-     * --Shitty because of processing data models into maps within the presenter.
-     * -Store parallel lists of account names and ids.
-     * --Shitty because of needing two methods asking the presenter for both names and ids.
-     * ---Wouldn't need to wait on the ids to be returned until they finalize creating the transaction.
+     * Used to store the accountId value passed into this fragment within the arguments bundle.
+     * Can be null meaning that no account is currently associated with this fragment.
      */
+    private Integer accountId;
 
+    /**
+     * Creates and returns a new instance of NewTransactionFragment.
+     * @param accountId account id associated with this new transaction. Can be null
+     * @return instance of NewTransactionFragment
+     */
+    public static NewTransactionFragment newInstance(Integer accountId) {
+        NewTransactionFragment newTransactionFragment = new NewTransactionFragment();
+        if (accountId != null) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(KEY_ACCOUNT_ID, accountId);
+            newTransactionFragment.setArguments(bundle);
+        }
+        return newTransactionFragment;
+    }
+
+    @Override
+    public void close() {
+    }
 }

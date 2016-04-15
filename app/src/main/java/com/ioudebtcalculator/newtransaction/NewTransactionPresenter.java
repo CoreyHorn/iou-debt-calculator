@@ -1,18 +1,16 @@
 package com.ioudebtcalculator.newtransaction;
 
 import com.ioudebtcalculator.models.Account;
-import com.ioudebtcalculator.models.AccountMetadata;
-import com.ioudebtcalculator.models.Transaction;
 
 import java.util.List;
 
 public interface NewTransactionPresenter {
 
     /**
-     * Grab a list of AccountMetadata representing all accounts in the database.
+     * Grab a list of Account representing all accounts in the database.
      * @return List of AccountMetadata
      */
-    List<AccountMetadata> getAccountMetadata();
+    List<Account> getAccounts();
 
 
     /**
