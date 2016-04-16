@@ -3,6 +3,7 @@ package com.ioudebtcalculator;
 import android.app.Application;
 import android.content.Context;
 
+import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.sqlite.SQLiteImpl;
 
 import javax.inject.Singleton;

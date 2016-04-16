@@ -1,6 +1,7 @@
 package com.ioudebtcalculator.newtransaction;
 
 import com.ioudebtcalculator.models.Account;
+import com.ioudebtcalculator.repository.DataRepositoryListener;
 
 import java.util.List;
 
@@ -8,9 +9,9 @@ public interface NewTransactionPresenter {
 
     /**
      * Grab a list of Account representing all accounts in the database.
-     * @return List of AccountMetadata
+     * @return List of Account
      */
-    List<Account> getAccounts();
+    List<Account> getAccounts(DataRepositoryListener listener);
 
 
     /**
