@@ -1,6 +1,9 @@
 package com.ioudebtcalculator.newtransaction;
 
+import com.ioudebtcalculator.App;
+import com.ioudebtcalculator.R;
 import com.ioudebtcalculator.models.Account;
+import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.DataRepositoryListener;
 
 import java.util.ArrayList;
@@ -8,17 +11,27 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 public class NewTransactionPresenterImpl implements NewTransactionPresenter{
+
+    @Inject
+    DataRepository dataRepository;
 
     NewTransactionView view;
 
-    public NewTransactionPresenterImpl(NewTransactionView view) {
-        this.view = view;
+    public NewTransactionPresenterImpl() {
+        App.getInstance().getAppComponent().inject(this);
     }
 
     @Override
-    public List<Account> getAccounts(DataRepositoryListener listener) {
-        return null;
+    public void setView(NewTransactionView newTransactionView) {
+        this.view = newTransactionView;
+    }
+
+    @Override
+    public void getAccounts(DataRepositoryListener listener) {
+        dataRepository.getAccounts(listener);
     }
 
     @Override
@@ -38,6 +51,13 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter{
 
     @Override
     public void validateInputAndSave() {
-
+        if (view.getBorrowOrLoanCheckedId() == -1) {
+            view.showErrorMessage(App.getInstance().getResources()
+                    .getString(R.string.new_transaction_borrow_or_loan_error));
+        }
+        if (view.getTransactionAmountEntered().equals("")) {
+            view.setTransactionAmountError(App.getInstance().getResources()
+                    .getString(R.string.new_transaction_amount_error));
+        }
     }
 }

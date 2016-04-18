@@ -8,4 +8,12 @@ public interface NewTransactionView {
      * Used to close the view.
      */
     void close();
+
+    int getBorrowOrLoanCheckedId();
+
+    String getTransactionAmountEntered();
+
+    void setTransactionAmountError(String error);
+
+
 }

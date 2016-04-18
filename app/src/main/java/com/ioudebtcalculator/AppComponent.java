@@ -1,5 +1,7 @@
 package com.ioudebtcalculator;
 
+import com.ioudebtcalculator.newtransaction.NewTransactionFragment;
+import com.ioudebtcalculator.newtransaction.NewTransactionPresenterImpl;
 import com.ioudebtcalculator.repository.sqlite.InsertAccountsTask;
 import com.ioudebtcalculator.repository.sqlite.InsertTransactionsTask;
 import com.ioudebtcalculator.repository.sqlite.QueryAccountsTask;
@@ -20,4 +22,6 @@ public interface AppComponent {
     void inject(InsertTransactionsTask target);
     void inject(UpdateAccountsTask target);
     void inject(UpdateTransactionsTask target);
+    void inject(NewTransactionPresenterImpl target);
+    void inject(NewTransactionFragment target);
 }

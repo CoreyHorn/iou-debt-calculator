@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +7,8 @@
 
     <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/rdgBorrowOrLoan">
 
         <RadioButton
             android:layout_width="match_parent"
@@ -26,53 +27,67 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtAccountName"
         android:labelFor="@+id/spnAccountName"
-        android:text="@string/new_transaction_account"/>
+        android:text="@string/new_transaction_account"
+        android:layout_below="@id/rdgBorrowOrLoan"/>
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@id/spnAccountName"/>
+        android:id="@id/spnAccountName"
+        android:layout_below="@id/txtAccountName"/>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnNewAccount"
+        android:layout_toEndOf="@id/spnAccountName"
         android:contentDescription="@string/new_account_button_content_description"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtAmount"
-        android:labelFor="@+id/edtAmount"
-        android:text="@string/new_transaction_amount"/>
-
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@id/edtAmount"
-        android:inputType="numberDecimal"/>
+        android:id="@+id/edtAmount"
+        android:hint="@string/new_transaction_amount"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/spnAccountName"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/txtCurrency"
         android:labelFor="@+id/spnCurrency"
-        android:text="@string/new_transaction_currency"/>
+        android:text="@string/new_transaction_currency"
+        android:layout_below="@id/edtAmount"/>
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@id/spnCurrency"/>
+        android:id="@id/spnCurrency"
+        android:layout_below="@id/txtCurrency"/>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/chkRecurringTransaction"
-        android:text="@string/new_transaction_recurring_transaction"/>
+        android:text="@string/new_transaction_recurring_transaction"
+        android:layout_below="@id/spnCurrency"/>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/fabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/saveTransactionFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_done_white" />
+
+    </android.support.design.widget.CoordinatorLayout>
 
 
-
-
-
-
-</LinearLayout>
+</RelativeLayout>

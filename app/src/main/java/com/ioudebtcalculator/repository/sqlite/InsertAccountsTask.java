@@ -24,6 +24,7 @@ public class InsertAccountsTask extends AsyncTask<Account, Void, Void> {
         for (Account account : accounts) {
             database.insert(SQLiteImpl.TABLE_ACCOUNTS, null, account.getContentValues());
         }
+        database.setTransactionSuccessful();
         database.endTransaction();
         sqLite.closeDatabase();
         return null;

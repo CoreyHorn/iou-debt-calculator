@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">iOu Debt Calculator</string>
     <string name="action_settings">Settings</string>
+
+
+
     <string name="new_transaction_borrow_withdraw">Borrow / Withdraw</string>
     <string name="new_transaction_loan_deposit">Loan / Deposit</string>
     <string name="new_transaction_account">Account</string>
@@ -9,5 +12,11 @@
     <string name="new_transaction_recurring_transaction">Recurring Transaction</string>
     <string name="new_transaction_frequency">Frequency</string>
     <string name="new_transaction_start_date">Start Date</string>
+    <string name="new_transaction_save_transaction">Save Transaction</string>
+    <string name="new_transaction_borrow_or_loan_error">Must choose Borrow or Loan</string>
+    <string name="new_transaction_amount_error">Must enter an amount</string>
+
+
+
     <string name="new_account_button_content_description">Click to Create a New Account</string>
 </resources>

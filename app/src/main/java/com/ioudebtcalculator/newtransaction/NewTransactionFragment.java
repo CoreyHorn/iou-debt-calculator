@@ -2,12 +2,20 @@ package com.ioudebtcalculator.newtransaction;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.R;
 import com.ioudebtcalculator.models.Account;
 import com.ioudebtcalculator.models.Transaction;
@@ -15,7 +23,11 @@ import com.ioudebtcalculator.repository.DataRepositoryListener;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class NewTransactionFragment extends Fragment implements NewTransactionView {
+
+    @Inject NewTransactionPresenter presenter;
 
     public static final String KEY_ACCOUNT_ID = "accountId";
 
@@ -25,6 +37,10 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
      */
     private Integer accountId;
     private Spinner accountNameSpinner;
+    private Spinner currencySpinner;
+    private RadioGroup borrowOrLoanRadioGroup;
+    private EditText transactionAmount;
+    private CoordinatorLayout fabLayout;
 
     private DataRepositoryListener dataRepositoryListener = new DataRepositoryListener() {
         @Override
@@ -40,6 +56,13 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         @Override
         public void onTransactionListAvailable(List<Transaction> transactions) {
 
+        }
+    };
+
+    private View.OnClickListener saveTransactionListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            presenter.validateInputAndSave();
         }
     };
 
@@ -61,6 +84,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.getInstance().getAppComponent().inject(this);
         Bundle arguments = getArguments();
         if (arguments != null) {
             accountId = arguments.getInt(KEY_ACCOUNT_ID);
@@ -72,22 +96,54 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.newtransaction, container, false);
         accountNameSpinner = (Spinner) view.findViewById(R.id.spnAccountName);
+        currencySpinner = (Spinner) view.findViewById(R.id.spnCurrency);
+        borrowOrLoanRadioGroup = (RadioGroup) view.findViewById(R.id.rdgBorrowOrLoan);
+        transactionAmount = (EditText) view.findViewById(R.id.edtAmount);
+        fabLayout = (CoordinatorLayout) view.findViewById(R.id.fabLayout);
+        FloatingActionButton floatingActionButton = (FloatingActionButton) view
+                .findViewById(R.id.saveTransactionFab);
+        floatingActionButton.setOnClickListener(saveTransactionListener);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        presenter.getAccounts(dataRepositoryListener);
+        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_spinner_item,
+                presenter.getAvailableCurrencies());
+        currencySpinner.setAdapter(currencyAdapter);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        presenter.setView(this);
     }
 
     @Override
     public void showErrorMessage(String errorMessage) {
-
+        Snackbar.make(fabLayout, errorMessage, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void close() {
+    }
+
+    @Override
+    public int getBorrowOrLoanCheckedId() {
+        return borrowOrLoanRadioGroup.getCheckedRadioButtonId();
+    }
+
+    @Override
+    public String getTransactionAmountEntered() {
+        return transactionAmount.getText().toString();
+    }
+
+    @Override
+    public void setTransactionAmountError(String error) {
+        transactionAmount.setError(error);
     }
 
     private void setSpinnerToDefaultAccount() {

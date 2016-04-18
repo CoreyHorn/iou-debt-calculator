@@ -24,6 +24,7 @@ public class InsertTransactionsTask extends AsyncTask<Transaction, Void, Void> {
         for (Transaction transaction : transactions) {
             database.insert(SQLiteImpl.TABLE_TRANSACTIONS, null, transaction.getContentValues());
         }
+        database.setTransactionSuccessful();
         database.endTransaction();
         sqLite.closeDatabase();
         return null;

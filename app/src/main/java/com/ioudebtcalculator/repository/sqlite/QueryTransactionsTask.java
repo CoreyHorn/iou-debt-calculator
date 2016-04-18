@@ -61,6 +61,7 @@ public class QueryTransactionsTask extends AsyncTask<String, Void, List<Transact
                 } while (cursor.moveToNext());
             cursor.close();
         }
+        database.setTransactionSuccessful();
         database.endTransaction();
         sqLite.closeDatabase();
         return transactions;

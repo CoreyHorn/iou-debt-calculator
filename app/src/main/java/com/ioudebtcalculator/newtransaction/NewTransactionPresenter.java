@@ -9,9 +9,9 @@ public interface NewTransactionPresenter {
 
     /**
      * Grab a list of Account representing all accounts in the database.
-     * @return List of Account
+     * Passes data back through the listener.
      */
-    List<Account> getAccounts(DataRepositoryListener listener);
+    void getAccounts(DataRepositoryListener listener);
 
 
     /**
@@ -26,5 +26,7 @@ public interface NewTransactionPresenter {
      * Should notify the view on how to proceed.
      */
     void validateInputAndSave();
+
+    void setView(NewTransactionView view);
 
 }
