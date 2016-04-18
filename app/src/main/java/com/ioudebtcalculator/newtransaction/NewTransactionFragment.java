@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
@@ -39,6 +39,8 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     private Spinner accountNameSpinner;
     private Spinner currencySpinner;
     private RadioGroup borrowOrLoanRadioGroup;
+    private RadioButton loanRadioButton;
+    private RadioButton borrowRadioButton;
     private EditText transactionAmount;
     private CoordinatorLayout fabLayout;
 
@@ -98,6 +100,8 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         accountNameSpinner = (Spinner) view.findViewById(R.id.spnAccountName);
         currencySpinner = (Spinner) view.findViewById(R.id.spnCurrency);
         borrowOrLoanRadioGroup = (RadioGroup) view.findViewById(R.id.rdgBorrowOrLoan);
+        borrowRadioButton = (RadioButton) view.findViewById(R.id.rdbBorrow);
+        loanRadioButton = (RadioButton) view.findViewById(R.id.rdbLoan);
         transactionAmount = (EditText) view.findViewById(R.id.edtAmount);
         fabLayout = (CoordinatorLayout) view.findViewById(R.id.fabLayout);
         FloatingActionButton floatingActionButton = (FloatingActionButton) view
@@ -139,6 +143,12 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public String getTransactionAmountEntered() {
         return transactionAmount.getText().toString();
+    }
+
+    @Override
+    public void setBorrowOrLoanError(String error){
+        loanRadioButton.setError(error);
+        borrowRadioButton.setError(error);
     }
 
     @Override

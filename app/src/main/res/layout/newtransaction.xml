@@ -11,11 +11,13 @@
         android:id="@+id/rdgBorrowOrLoan">
 
         <RadioButton
+            android:id="@+id/rdbBorrow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/new_transaction_borrow_withdraw"/>
 
         <RadioButton
+            android:id="@+id/rdbLoan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/new_transaction_loan_deposit"/>
@@ -30,18 +32,27 @@
         android:text="@string/new_transaction_account"
         android:layout_below="@id/rdgBorrowOrLoan"/>
 
-    <Spinner
+    <LinearLayout
+        android:id="@+id/llyAccountName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@id/spnAccountName"
-        android:layout_below="@id/txtAccountName"/>
+        android:orientation="horizontal"
+        android:layout_below="@id/txtAccountName">
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnNewAccount"
-        android:layout_toEndOf="@id/spnAccountName"
-        android:contentDescription="@string/new_account_button_content_description"/>
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@id/spnAccountName" />
+
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:id="@+id/btnNewAccount"
+            android:src="@color/colorPrimaryDark"
+            android:contentDescription="@string/new_account_button_content_description"/>
+
+    </LinearLayout>
 
     <EditText
         android:layout_width="match_parent"
@@ -49,7 +60,7 @@
         android:id="@+id/edtAmount"
         android:hint="@string/new_transaction_amount"
         android:inputType="numberDecimal"
-        android:layout_below="@id/spnAccountName"/>
+        android:layout_below="@id/llyAccountName"/>
 
     <TextView
         android:layout_width="wrap_content"

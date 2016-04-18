@@ -13,6 +13,7 @@ public interface NewTransactionView {
 
     String getTransactionAmountEntered();
 
+    void setBorrowOrLoanError(String error);
     void setTransactionAmountError(String error);
 
 
