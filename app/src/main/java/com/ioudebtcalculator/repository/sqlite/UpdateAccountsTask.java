@@ -25,6 +25,7 @@ public class UpdateAccountsTask extends AsyncTask<Account, Void, Void> {
             database.update(SQLiteImpl.TABLE_ACCOUNTS, account.getContentValues(), SQLiteImpl.KEY_ID + " =?",
                     new String[]{String.valueOf(account.getId())});
         }
+        database.setTransactionSuccessful();
         database.endTransaction();
         sqLite.closeDatabase();
         return null;

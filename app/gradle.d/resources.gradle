@@ -1,0 +1,31 @@
+/**
+ * Define list of packages that can contain resources.
+ * 'res' should always be first.
+ * @return Array of packages as Strings
+ */
+def getJavaPackageResourcePaths() {
+    return [
+            'res',
+            'newtransaction'
+    ]
+}
+
+/**
+ * Get array of directories that contain app resources.
+ * @return Array of directories as Strings
+ */
+def getResourceDirectories() {
+    def baseResourceDirectory = 'src/main/res'
+    def baseJavaResourcePath = 'src/main/java/com/ioudebtcalculator/'
+    def resourceDirectoryName = "/res"
+    def resourceDirectories = []
+
+    resourceDirectories << baseResourceDirectory
+
+    for (path in getJavaPackageResourcePaths())
+        resourceDirectories << baseJavaResourcePath + path + resourceDirectoryName
+
+    return resourceDirectories;
+}
+
+android.sourceSets.main.res.srcDirs = getResourceDirectories()

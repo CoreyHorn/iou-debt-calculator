@@ -67,6 +67,7 @@ public class QueryAccountsTask extends AsyncTask<String, Void, List<Account>> {
                 } while (cursor.moveToNext());
             cursor.close();
         }
+        database.setTransactionSuccessful();
         database.endTransaction();
         sqLite.closeDatabase();
         return accounts;

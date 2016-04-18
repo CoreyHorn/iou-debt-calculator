@@ -3,8 +3,6 @@ package com.ioudebtcalculator.repository;
 import com.ioudebtcalculator.models.Account;
 import com.ioudebtcalculator.models.Transaction;
 
-import java.util.List;
-
 public interface DataRepository {
     void getAccounts(DataRepositoryListener listener);
     void getAccountsBySearch(String searchString, DataRepositoryListener listener);

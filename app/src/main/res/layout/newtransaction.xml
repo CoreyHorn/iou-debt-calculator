@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rdgBorrowOrLoan">
+
+        <RadioButton
+            android:id="@+id/rdbBorrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_transaction_borrow_withdraw"/>
+
+        <RadioButton
+            android:id="@+id/rdbLoan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_transaction_loan_deposit"/>
+
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtAccountName"
+        android:labelFor="@+id/spnAccountName"
+        android:text="@string/new_transaction_account"
+        android:layout_below="@id/rdgBorrowOrLoan"/>
+
+    <LinearLayout
+        android:id="@+id/llyAccountName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/txtAccountName">
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@id/spnAccountName" />
+
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:id="@+id/btnNewAccount"
+            android:src="@color/colorPrimaryDark"
+            android:contentDescription="@string/new_account_button_content_description"/>
+
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtAmount"
+        android:hint="@string/new_transaction_amount"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/llyAccountName"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtCurrency"
+        android:labelFor="@+id/spnCurrency"
+        android:text="@string/new_transaction_currency"
+        android:layout_below="@id/edtAmount"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@id/spnCurrency"
+        android:layout_below="@id/txtCurrency"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chkRecurringTransaction"
+        android:text="@string/new_transaction_recurring_transaction"
+        android:layout_below="@id/spnCurrency"/>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/fabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/saveTransactionFab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/ic_done_white" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+</RelativeLayout>
