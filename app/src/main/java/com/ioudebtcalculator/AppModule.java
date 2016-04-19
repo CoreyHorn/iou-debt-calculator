@@ -3,6 +3,8 @@ package com.ioudebtcalculator;
 import android.app.Application;
 import android.content.Context;
 
+import com.ioudebtcalculator.newaccount.NewAccountPresenter;
+import com.ioudebtcalculator.newaccount.NewAccountPresenterImpl;
 import com.ioudebtcalculator.newtransaction.NewTransactionPresenter;
 import com.ioudebtcalculator.newtransaction.NewTransactionPresenterImpl;
 import com.ioudebtcalculator.repository.DataRepository;
@@ -37,11 +39,13 @@ public class AppModule {
         return provideSQLiteImpl(context);
     }
 
-
-
-
     @Provides
     public NewTransactionPresenter provideNewTransactionPresenter() {
         return new NewTransactionPresenterImpl();
+    }
+
+    @Provides
+    public NewAccountPresenter provideNewAccountPresenter() {
+        return new NewAccountPresenterImpl();
     }
 }

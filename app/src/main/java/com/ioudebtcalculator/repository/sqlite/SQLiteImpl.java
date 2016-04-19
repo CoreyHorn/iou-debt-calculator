@@ -27,6 +27,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
      * Variables related to both tables within the database.
      */
     public static final String KEY_ID = "key_id";
+    public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_CREATED_TIMESTAMP = "createdTimestamp";
     public static final String FIELD_CURRENCY_CODE = "currencyCode";
     public static final String FIELD_DELETED = "deleted";
@@ -38,7 +39,6 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     public static final String FIELD_CURRENT_BALANCE = "currentBalance";
     public static final String FIELD_NAME = "accountName";
     public static final String FIELD_IMAGE_URI = "imageUri";
-    public static final String FIELD_DESCRIPTION = "description";
     public static final String FIELD_DUE_DATE_TIMESTAMP = "dueDateTimestamp";
 
     /**
@@ -73,6 +73,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
                 + FIELD_ACCOUNT_ID + "' INTEGER NOT NULL, '"
                 + FIELD_AMOUNT + "' TEXT NOT NULL, '"
                 + FIELD_CURRENCY_CODE + "' TEXT NOT NULL, '"
+                + FIELD_DESCRIPTION + "' TEXT, '"
                 + FIELD_POST_CONVERSION_AMOUNT + "' TEXT NOT NULL, '"
                 + FIELD_CREATED_TIMESTAMP + "' INTEGER NOT NULL, '"
                 + FIELD_DELETED + "' INTEGER);";
