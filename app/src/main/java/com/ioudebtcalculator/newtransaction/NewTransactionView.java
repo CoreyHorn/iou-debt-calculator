@@ -11,10 +11,8 @@ public interface NewTransactionView {
 
     int getBorrowOrLoanCheckedId();
 
-    String getTransactionAmountEntered();
+    String getAmountEntered();
 
-    void setBorrowOrLoanError(String error);
-    void setTransactionAmountError(String error);
-
-
+    void setBorrowOrLoanError();
+    void setTransactionAmountError();
 }

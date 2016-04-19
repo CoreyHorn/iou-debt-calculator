@@ -1,5 +1,6 @@
 package com.ioudebtcalculator.newtransaction;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -36,21 +37,21 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
      * Can be null meaning that no account is currently associated with this fragment.
      */
     private Integer accountId;
-    private Spinner accountNameSpinner;
-    private Spinner currencySpinner;
-    private RadioGroup borrowOrLoanRadioGroup;
-    private RadioButton loanRadioButton;
-    private RadioButton borrowRadioButton;
-    private EditText transactionAmount;
+    private Spinner spnAccountName;
+    private Spinner spnCurrency;
+    private RadioGroup rdgBorrowOrLoan;
+    private RadioButton rdbLoan;
+    private RadioButton rdbBorrow;
+    private EditText edtAmount;
     private CoordinatorLayout fabLayout;
 
     private DataRepositoryListener dataRepositoryListener = new DataRepositoryListener() {
         @Override
         public void onAccountListAvailable(List<Account> accounts) {
-            if (accountNameSpinner != null) {
+            if (spnAccountName != null) {
                 AccountNameSpinnerAdapter adapter = new AccountNameSpinnerAdapter(accounts,
                         getContext());
-                accountNameSpinner.setAdapter(adapter);
+                spnAccountName.setAdapter(adapter);
                 setSpinnerToDefaultAccount();
             }
         }
@@ -65,6 +66,14 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         @Override
         public void onClick(View v) {
             presenter.validateInputAndSave();
+        }
+    };
+
+    private View.OnClickListener clearRadioErrorListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            rdbLoan.setError(null);
+            rdbBorrow.setError(null);
         }
     };
 
@@ -95,18 +104,22 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.newtransaction, container, false);
-        accountNameSpinner = (Spinner) view.findViewById(R.id.spnAccountName);
-        currencySpinner = (Spinner) view.findViewById(R.id.spnCurrency);
-        borrowOrLoanRadioGroup = (RadioGroup) view.findViewById(R.id.rdgBorrowOrLoan);
-        borrowRadioButton = (RadioButton) view.findViewById(R.id.rdbBorrow);
-        loanRadioButton = (RadioButton) view.findViewById(R.id.rdbLoan);
-        transactionAmount = (EditText) view.findViewById(R.id.edtAmount);
+        spnAccountName = (Spinner) view.findViewById(R.id.spnAccountName);
+        spnCurrency = (Spinner) view.findViewById(R.id.spnCurrency);
+        rdgBorrowOrLoan = (RadioGroup) view.findViewById(R.id.rdgBorrowOrLoan);
+        rdbBorrow = (RadioButton) view.findViewById(R.id.rdbBorrow);
+        rdbLoan = (RadioButton) view.findViewById(R.id.rdbLoan);
+        edtAmount = (EditText) view.findViewById(R.id.edtAmount);
         fabLayout = (CoordinatorLayout) view.findViewById(R.id.fabLayout);
         FloatingActionButton floatingActionButton = (FloatingActionButton) view
                 .findViewById(R.id.saveTransactionFab);
         floatingActionButton.setOnClickListener(saveTransactionListener);
+        rdbBorrow.setOnClickListener(clearRadioErrorListener);
+        rdbLoan.setOnClickListener(clearRadioErrorListener);
         return view;
     }
 
@@ -117,7 +130,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         ArrayAdapter<String> currencyAdapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_spinner_item,
                 presenter.getAvailableCurrencies());
-        currencySpinner.setAdapter(currencyAdapter);
+        spnCurrency.setAdapter(currencyAdapter);
     }
 
     @Override
@@ -133,36 +146,41 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
 
     @Override
     public void close() {
+        //TODO: Handle closing the fragment.
     }
 
     @Override
     public int getBorrowOrLoanCheckedId() {
-        return borrowOrLoanRadioGroup.getCheckedRadioButtonId();
+        return rdgBorrowOrLoan.getCheckedRadioButtonId();
     }
 
     @Override
-    public String getTransactionAmountEntered() {
-        return transactionAmount.getText().toString();
+    public String getAmountEntered() {
+        return edtAmount.getText().toString();
     }
 
     @Override
-    public void setBorrowOrLoanError(String error){
-        loanRadioButton.setError(error);
-        borrowRadioButton.setError(error);
+    public void setBorrowOrLoanError(){
+        Resources resources = getResources();
+        rdbLoan.setError(resources
+                .getString(R.string.error_borrow_or_loan));
+        rdbBorrow.setError(resources
+                .getString(R.string.error_borrow_or_loan));
     }
 
     @Override
-    public void setTransactionAmountError(String error) {
-        transactionAmount.setError(error);
+    public void setTransactionAmountError() {
+        edtAmount.setError(getResources()
+            .getString(R.string.error_must_enter_amount));
     }
 
     private void setSpinnerToDefaultAccount() {
         if (accountId != null) {
             for (int position = 0;
-                 position < accountNameSpinner.getAdapter().getCount();
+                 position < spnAccountName.getAdapter().getCount();
                  position++) {
-                if (accountNameSpinner.getAdapter().getItemId(position) == accountId) {
-                    accountNameSpinner.setSelection(position);
+                if (spnAccountName.getAdapter().getItemId(position) == accountId) {
+                    spnAccountName.setSelection(position);
                     return;
                 }
             }

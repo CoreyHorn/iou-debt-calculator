@@ -1,7 +1,5 @@
 package com.ioudebtcalculator.newtransaction;
 
-import android.content.res.Resources;
-
 import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.R;
 import com.ioudebtcalculator.repository.DataRepository;
@@ -52,16 +50,12 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter{
 
     @Override
     public void validateInputAndSave() {
-        Resources resources = App.getInstance().getResources();
         if (view.getBorrowOrLoanCheckedId() == -1) {
-            view.setBorrowOrLoanError(resources
-                    .getString(R.string.new_transaction_borrow_or_loan_error));
-        } else {
-            view.setBorrowOrLoanError(null);
+            view.setBorrowOrLoanError();
         }
-        if (view.getTransactionAmountEntered().equals("")) {
-            view.setTransactionAmountError(resources
-                    .getString(R.string.new_transaction_amount_error));
+        if (view.getAmountEntered().equals("")) {
+            view.setTransactionAmountError();
         }
+        //TODO: Handle saving the transaction and closing the fragment.
     }
 }

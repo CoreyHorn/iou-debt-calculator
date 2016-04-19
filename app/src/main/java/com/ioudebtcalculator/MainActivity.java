@@ -3,6 +3,7 @@ package com.ioudebtcalculator;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.ioudebtcalculator.newaccount.NewAccountFragment;
 import com.ioudebtcalculator.newtransaction.NewTransactionFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,10 +17,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        NewTransactionFragment newTransactionFragment = NewTransactionFragment.newInstance(null);
+//        NewTransactionFragment newTransactionFragment = NewTransactionFragment.newInstance(null);
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .add(R.id.fragmentContainer, newTransactionFragment)
+//                .commit();
+
+        NewAccountFragment newAccountFragment = NewAccountFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragmentContainer, newTransactionFragment)
+                .add(R.id.fragmentContainer, newAccountFragment)
                 .commit();
 
     }
