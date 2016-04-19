@@ -11,6 +11,7 @@ public class Transaction {
     private String amount;
     private String currencyCode;
     private String postConversionAmount;
+    private String description;
     private long createdTimestamp;
     private boolean deleted;
 
@@ -65,6 +66,14 @@ public class Transaction {
         this.postConversionAmount = postConversionAmount;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public long getCreatedTimestamp() {
         return createdTimestamp;
     }
@@ -86,6 +95,7 @@ public class Transaction {
         contentValues.put(SQLiteImpl.FIELD_ACCOUNT_ID, getAccountId());
         contentValues.put(SQLiteImpl.FIELD_AMOUNT, getAmount());
         contentValues.put(SQLiteImpl.FIELD_CURRENCY_CODE, getCurrencyCode());
+        contentValues.put(SQLiteImpl.FIELD_DESCRIPTION, getDescription());
         contentValues.put(SQLiteImpl.FIELD_POST_CONVERSION_AMOUNT, getPostConversionAmount());
         contentValues.put(SQLiteImpl.FIELD_CREATED_TIMESTAMP, getCreatedTimestamp());
         //TODO: May need to refactor next line based on boolean handling.
