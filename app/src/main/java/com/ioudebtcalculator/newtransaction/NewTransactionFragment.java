@@ -95,7 +95,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.getInstance().getAppComponent().inject(this);
+        ((App) getActivity().getApplication()).getAppComponent().inject(this);
         Bundle arguments = getArguments();
         if (arguments != null) {
             accountId = arguments.getInt(KEY_ACCOUNT_ID);

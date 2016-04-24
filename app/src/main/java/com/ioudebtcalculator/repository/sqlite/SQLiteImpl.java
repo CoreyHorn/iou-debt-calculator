@@ -112,6 +112,28 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     }
 
     /**
+     * Returns a list of all Account objects with an amount >= 0
+     * @param listener listener to return result through.
+     */
+    @Override
+    public void getLoans(DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS
+                + " WHERE " + FIELD_AMOUNT + " >= 0";
+        new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
+    }
+
+    /**
+     * Returns a list of all Account objects with an amount <= 0
+     * @param listener listener to return result through.
+     */
+    @Override
+    public void getDebts(DataRepositoryListener listener) {
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS
+                + " WHERE " + FIELD_AMOUNT + " >= 0";
+        new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
+    }
+
+    /**
      * Returns a list of Account objects containing the searchString in either the description
      * or name.
      * @param searchString string of characters to search for.

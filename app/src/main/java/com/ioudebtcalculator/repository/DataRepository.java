@@ -5,6 +5,8 @@ import com.ioudebtcalculator.models.Transaction;
 
 public interface DataRepository {
     void getAccounts(DataRepositoryListener listener);
+    void getLoans(DataRepositoryListener listener);
+    void getDebts(DataRepositoryListener listener);
     void getAccountsBySearch(String searchString, DataRepositoryListener listener);
     void getAccount(int accountId, DataRepositoryListener listener);
     void setAccountBalance(Account account, String newBalance);

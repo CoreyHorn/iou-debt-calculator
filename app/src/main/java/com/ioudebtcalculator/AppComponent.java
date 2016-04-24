@@ -1,9 +1,9 @@
 package com.ioudebtcalculator;
 
+import com.ioudebtcalculator.accountlist.AccountListFragment;
 import com.ioudebtcalculator.newaccount.NewAccountFragment;
 import com.ioudebtcalculator.newaccount.NewAccountPresenterImpl;
 import com.ioudebtcalculator.newtransaction.NewTransactionFragment;
-import com.ioudebtcalculator.newtransaction.NewTransactionPresenter;
 import com.ioudebtcalculator.newtransaction.NewTransactionPresenterImpl;
 import com.ioudebtcalculator.repository.sqlite.InsertAccountsTask;
 import com.ioudebtcalculator.repository.sqlite.InsertTransactionsTask;
@@ -29,4 +29,6 @@ public interface AppComponent {
     void inject(NewTransactionFragment target);
     void inject(NewAccountFragment target);
     void inject(NewAccountPresenterImpl target);
+    void inject(AccountListPagerAdapter target);
+    void inject(AccountListFragment target);
 }

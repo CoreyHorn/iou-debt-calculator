@@ -1,7 +1,6 @@
 package com.ioudebtcalculator.newtransaction;
 
 import com.ioudebtcalculator.App;
-import com.ioudebtcalculator.R;
 import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.DataRepositoryListener;
 
@@ -12,12 +11,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-public class NewTransactionPresenterImpl implements NewTransactionPresenter{
+public class NewTransactionPresenterImpl implements NewTransactionPresenter {
 
     @Inject
     DataRepository dataRepository;
 
-    NewTransactionView view;
+    private NewTransactionView view;
 
     public NewTransactionPresenterImpl() {
         App.getInstance().getAppComponent().inject(this);
