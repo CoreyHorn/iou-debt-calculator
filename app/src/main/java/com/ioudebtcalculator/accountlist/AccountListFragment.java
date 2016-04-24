@@ -3,6 +3,7 @@ package com.ioudebtcalculator.accountlist;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class AccountListFragment extends Fragment implements AccountListView {
     @Inject AccountListPresenter presenter;
 
     private AccountListAdapter accountListAdapter;
+    private String type;
 
 
     public static AccountListFragment newInstance(String type) {
@@ -42,6 +44,11 @@ public class AccountListFragment extends Fragment implements AccountListView {
         App.getInstance().getAppComponent().inject(this);
         accountListAdapter = new AccountListAdapter();
         presenter.setView(this);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            type = arguments.getString(KEY_TYPE);
+        }
     }
 
     @Nullable
@@ -51,6 +58,7 @@ public class AccountListFragment extends Fragment implements AccountListView {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.accountlist, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rcyAccountList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(accountListAdapter);
         return view;
     }
@@ -61,9 +69,13 @@ public class AccountListFragment extends Fragment implements AccountListView {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        presenter.refreshAccounts(type);
+    }
+
+    @Override
     public void displayAccounts(List<Account> accountList) {
         accountListAdapter.setAccounts(accountList);
-        accountListAdapter.notifyDataSetChanged();
-        //TODO: Logic to notify the adapter properly based on what has been changed.
     }
 }

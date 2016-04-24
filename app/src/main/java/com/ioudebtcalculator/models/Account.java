@@ -13,11 +13,11 @@ public class Account {
     private String imageUri;
     private String description;
     private long createdTimestamp;
-    private long dueDateTimestamp;
+    private Long dueDateTimestamp;
     private boolean deleted = false;
 
     public Account(String currentBalance, String currencyCode, String name, String imageUri,
-                   String description, long createdTimestamp, long dueDateTimestamp) {
+                   String description, long createdTimestamp, Long dueDateTimestamp) {
         this.currentBalance = currentBalance;
         this.currencyCode = currencyCode;
         this.name = name;
@@ -97,7 +97,7 @@ public class Account {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public long getDueDateTimestamp() {
+    public Long getDueDateTimestamp() {
         return dueDateTimestamp;
     }
 

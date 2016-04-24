@@ -3,6 +3,7 @@ package com.ioudebtcalculator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         viewPager.setAdapter(new AccountListPagerAdapter(getSupportFragmentManager()));
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
 
         if (savedInstanceState != null) {
             return;

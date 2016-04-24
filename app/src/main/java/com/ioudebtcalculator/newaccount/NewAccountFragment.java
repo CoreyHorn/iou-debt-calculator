@@ -101,7 +101,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
 
     @Override
     public void close() {
-        //TODO: Handle closing the fragment.
+        getActivity().finish();
     }
 
     @Override
@@ -117,6 +117,11 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     @Override
     public String getNameEntered() {
         return edtAccountName.getText().toString();
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return spnCurrency.getSelectedItem().toString();
     }
 
     @Override

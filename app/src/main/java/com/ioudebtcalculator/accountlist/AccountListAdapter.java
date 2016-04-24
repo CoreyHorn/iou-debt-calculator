@@ -9,13 +9,14 @@ import android.widget.TextView;
 import com.ioudebtcalculator.R;
 import com.ioudebtcalculator.models.Account;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountListAdapter extends RecyclerView.Adapter {
 
     public static final int VIEW_TYPE_DEFAULT = 0;
 
-    private List<Account> accountList;
+    private List<Account> accountList = new ArrayList<>();
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,6 +43,11 @@ public class AccountListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return accountList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return VIEW_TYPE_DEFAULT;
     }
 
     public void setAccounts(List<Account> accountList) {

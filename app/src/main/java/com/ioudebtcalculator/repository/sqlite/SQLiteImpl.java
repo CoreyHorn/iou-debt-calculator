@@ -118,7 +118,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     @Override
     public void getLoans(DataRepositoryListener listener) {
         String query = "SELECT * FROM " + TABLE_ACCOUNTS
-                + " WHERE " + FIELD_AMOUNT + " >= 0";
+                + " WHERE " + FIELD_CURRENT_BALANCE + " >= 0";
         new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 
@@ -129,7 +129,7 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
     @Override
     public void getDebts(DataRepositoryListener listener) {
         String query = "SELECT * FROM " + TABLE_ACCOUNTS
-                + " WHERE " + FIELD_AMOUNT + " >= 0";
+                + " WHERE " + FIELD_CURRENT_BALANCE + " >= 0";
         new QueryAccountsTask(listener).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
     }
 

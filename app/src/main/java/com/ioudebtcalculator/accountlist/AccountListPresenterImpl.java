@@ -1,5 +1,6 @@
 package com.ioudebtcalculator.accountlist;
 
+import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.models.Account;
 import com.ioudebtcalculator.models.Transaction;
 import com.ioudebtcalculator.repository.DataRepository;
@@ -16,6 +17,10 @@ public class AccountListPresenterImpl implements AccountListPresenter {
 
     private AccountListView view;
     private List<Account> currentAccounts;
+
+    public AccountListPresenterImpl() {
+        App.getInstance().getAppComponent().inject(this);
+    }
 
     private DataRepositoryListener dataRepositoryListener = new DataRepositoryListener() {
         @Override

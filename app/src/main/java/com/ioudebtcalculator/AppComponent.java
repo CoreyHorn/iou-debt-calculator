@@ -1,6 +1,7 @@
 package com.ioudebtcalculator;
 
 import com.ioudebtcalculator.accountlist.AccountListFragment;
+import com.ioudebtcalculator.accountlist.AccountListPresenterImpl;
 import com.ioudebtcalculator.newaccount.NewAccountFragment;
 import com.ioudebtcalculator.newaccount.NewAccountPresenterImpl;
 import com.ioudebtcalculator.newtransaction.NewTransactionFragment;
@@ -31,4 +32,5 @@ public interface AppComponent {
     void inject(NewAccountPresenterImpl target);
     void inject(AccountListPagerAdapter target);
     void inject(AccountListFragment target);
+    void inject(AccountListPresenterImpl target);
 }

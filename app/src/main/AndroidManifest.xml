@@ -22,7 +22,10 @@
         <activity
             android:name=".newtransaction.NewTransactionActivity"
             android:label="New Transaction">
-
+        </activity>
+        <activity
+            android:name=".newaccount.NewAccountActivity"
+            android:label="New Account">
         </activity>
     </application>
 
