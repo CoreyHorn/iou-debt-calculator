@@ -1,6 +1,5 @@
 package com.ioudebtcalculator.newtransaction;
 
-import com.ioudebtcalculator.models.Account;
 import com.ioudebtcalculator.repository.DataRepositoryListener;
 
 import java.util.List;

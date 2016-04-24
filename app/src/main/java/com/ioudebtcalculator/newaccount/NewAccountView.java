@@ -10,6 +10,7 @@ public interface NewAccountView {
     int getBorrowOrLoanCheckedId();
     String getAmountEntered();
     String getNameEntered();
+    String getCurrencyCode();
     String getDescriptionEntered();
 
     void setAmountError();

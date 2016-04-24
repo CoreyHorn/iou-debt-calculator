@@ -1,6 +1,5 @@
 package com.ioudebtcalculator.newaccount;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +27,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     private RadioButton rdbBorrow;
     private RadioButton rdbLoan;
     private EditText edtAccountName;
+    //TODO: Implement Contact adding and attach to this button.
     private ImageButton btnAddContact;
     private EditText edtAmount;
     private Spinner spnCurrency;
@@ -56,7 +56,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.getInstance().getAppComponent().inject(this);
+        ((App) getActivity().getApplication()).getAppComponent().inject(this);
     }
 
     @Nullable
@@ -101,7 +101,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
 
     @Override
     public void close() {
-        //TODO: Handle closing the fragment.
+        getActivity().finish();
     }
 
     @Override
@@ -117,6 +117,11 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     @Override
     public String getNameEntered() {
         return edtAccountName.getText().toString();
+    }
+
+    @Override
+    public String getCurrencyCode() {
+        return spnCurrency.getSelectedItem().toString();
     }
 
     @Override

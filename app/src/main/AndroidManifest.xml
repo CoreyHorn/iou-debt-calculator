@@ -19,6 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".newtransaction.NewTransactionActivity"
+            android:label="New Transaction">
+        </activity>
+        <activity
+            android:name=".newaccount.NewAccountActivity"
+            android:label="New Account">
+        </activity>
     </application>
 
 </manifest>

@@ -3,6 +3,8 @@ package com.ioudebtcalculator;
 import android.app.Application;
 import android.content.Context;
 
+import com.ioudebtcalculator.accountlist.AccountListPresenter;
+import com.ioudebtcalculator.accountlist.AccountListPresenterImpl;
 import com.ioudebtcalculator.newaccount.NewAccountPresenter;
 import com.ioudebtcalculator.newaccount.NewAccountPresenterImpl;
 import com.ioudebtcalculator.newtransaction.NewTransactionPresenter;
@@ -47,5 +49,10 @@ public class AppModule {
     @Provides
     public NewAccountPresenter provideNewAccountPresenter() {
         return new NewAccountPresenterImpl();
+    }
+
+    @Provides
+    public AccountListPresenter provideAccountListPresenter() {
+        return new AccountListPresenterImpl();
     }
 }
