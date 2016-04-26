@@ -16,10 +16,16 @@ public class NewAccountPresenterImpl implements NewAccountPresenter {
     @Inject
     DataRepository dataRepository;
 
-    NewAccountView view;
+    private NewAccountView view;
 
     public NewAccountPresenterImpl() {
+        //TODO: Change all Presenters to use Constructor injection.
         App.getInstance().getAppComponent().inject(this);
+    }
+
+    @Override
+    public void setView(NewAccountFragment view) {
+        this.view = view;
     }
 
     @Override
@@ -35,6 +41,11 @@ public class NewAccountPresenterImpl implements NewAccountPresenter {
             currencySymbols.add(currency.getSymbol());
         }
         return currencySymbols;
+    }
+
+    @Override
+    public void setContact() {
+
     }
 
     @Override
@@ -58,18 +69,15 @@ public class NewAccountPresenterImpl implements NewAccountPresenter {
                     view.getAmountEntered(),
                     view.getCurrencyCode(),
                     view.getNameEntered(),
-                    null,
+                    view.getImageUri(),
                     view.getDescriptionEntered(),
                     System.currentTimeMillis(),
                     null
-                    );
+            );
             dataRepository.saveAccount(account);
             view.close();
         }
     }
 
-    @Override
-    public void setView(NewAccountFragment view) {
-        this.view = view;
-    }
+
 }

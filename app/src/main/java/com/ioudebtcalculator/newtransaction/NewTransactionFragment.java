@@ -1,5 +1,6 @@
 package com.ioudebtcalculator.newtransaction;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -35,7 +36,6 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
 
     public static final String KEY_ACCOUNT_ID = "accountId";
     public static final int NEW_ACCOUNT_REQUEST = 1;
-    public static final int NEW_ACCOUNT_REQUEST_SUCCESS = 2;
 
     /**
      * Used to store the account id value passed into this fragment within the arguments bundle.
@@ -51,6 +51,8 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     private CoordinatorLayout fabLayout;
     private ImageButton imbNewAccount;
 
+    private int forceSelectedAccountPosition = -1;
+
     private DataRepositoryListener dataRepositoryListener = new DataRepositoryListener() {
         @Override
         public void onAccountListAvailable(List<Account> accounts) {
@@ -58,7 +60,11 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
                 AccountNameSpinnerAdapter adapter = new AccountNameSpinnerAdapter(accounts,
                         getContext());
                 spnAccountName.setAdapter(adapter);
-                setSpinnerToDefaultAccount();
+                if (forceSelectedAccountPosition == -1) {
+                    setSpinnerToDefaultAccount();
+                } else {
+                    spnAccountName.setSelection(forceSelectedAccountPosition);
+                }
             }
         }
 
@@ -121,7 +127,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.newtransaction, container, false);
+        View view =  inflater.inflate(R.layout.fragment_new_transaction, container, false);
         spnAccountName = (Spinner) view.findViewById(R.id.spnAccountName);
         spnCurrency = (Spinner) view.findViewById(R.id.spnCurrency);
         rdgBorrowOrLoan = (RadioGroup) view.findViewById(R.id.rdgBorrowOrLoan);
@@ -158,8 +164,11 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_ACCOUNT_REQUEST) {
-            if (resultCode == NEW_ACCOUNT_REQUEST_SUCCESS) {
-                
+            if (resultCode == Activity.RESULT_OK) {
+                int selectionIndex = spnAccountName.getAdapter().getCount();
+                if (selectionIndex >= 0) {
+                    forceSelectedAccountPosition = selectionIndex;
+                }
             }
         }
     }
@@ -171,7 +180,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
 
     @Override
     public void close() {
-        //TODO: Handle closing the fragment.
+        getActivity().finish();
     }
 
     @Override

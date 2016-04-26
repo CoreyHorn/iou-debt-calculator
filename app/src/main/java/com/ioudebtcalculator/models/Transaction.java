@@ -98,7 +98,6 @@ public class Transaction {
         contentValues.put(SQLiteImpl.FIELD_DESCRIPTION, getDescription());
         contentValues.put(SQLiteImpl.FIELD_POST_CONVERSION_AMOUNT, getPostConversionAmount());
         contentValues.put(SQLiteImpl.FIELD_CREATED_TIMESTAMP, getCreatedTimestamp());
-        //TODO: May need to refactor next line based on boolean handling.
         contentValues.put(SQLiteImpl.FIELD_DELETED, isDeleted());
         return contentValues;
     }

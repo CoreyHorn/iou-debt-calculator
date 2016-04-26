@@ -1,6 +1,11 @@
 package com.ioudebtcalculator.newaccount;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -21,18 +27,23 @@ import javax.inject.Inject;
 
 public class NewAccountFragment extends Fragment implements NewAccountView {
 
+    private static final int CONTACT_PICKER_RESULT = 0;
+    private static final String KEY_PHOTO_URI = "key_photo_uri";
+
     @Inject NewAccountPresenter presenter;
 
     private RadioGroup rdgBorrowOrLoan;
     private RadioButton rdbBorrow;
     private RadioButton rdbLoan;
     private EditText edtAccountName;
-    //TODO: Implement Contact adding and attach to this button.
     private ImageButton btnAddContact;
     private EditText edtAmount;
     private Spinner spnCurrency;
     private EditText edtDescription;
+    private ImageView imgAccountImage;
     private FloatingActionButton btnSaveAccount;
+
+    private String photoUri;
 
     private View.OnClickListener saveAccountListener = new View.OnClickListener() {
         @Override
@@ -46,6 +57,15 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         public void onClick(View v) {
             rdbBorrow.setError(null);
             rdbLoan.setError(null);
+        }
+    };
+
+    private View.OnClickListener pickContactListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                    ContactsContract.Contacts.CONTENT_URI);
+            startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
         }
     };
 
@@ -64,7 +84,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.newaccount, container, false);
+        View view = inflater.inflate(R.layout.fragment_new_account, container, false);
 
         rdgBorrowOrLoan = (RadioGroup) view.findViewById(R.id.rdgBorrowOrLoan);
         rdbBorrow = (RadioButton) view.findViewById(R.id.rdbBorrow);
@@ -74,11 +94,13 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         edtAmount = (EditText) view.findViewById(R.id.edtAmount);
         spnCurrency = (Spinner) view.findViewById(R.id.spnCurrency);
         edtDescription = (EditText) view.findViewById(R.id.edtDescription);
+        imgAccountImage = (ImageView) view.findViewById(R.id.imgAccountImage);
         btnSaveAccount = (FloatingActionButton) view.findViewById(R.id.saveAccountFab);
 
         btnSaveAccount.setOnClickListener(saveAccountListener);
         rdbBorrow.setOnClickListener(clearRadioErrorListener);
         rdbLoan.setOnClickListener(clearRadioErrorListener);
+        btnAddContact.setOnClickListener(pickContactListener);
 
         return view;
     }
@@ -90,7 +112,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
                 getContext(),
                 android.R.layout.simple_spinner_item,
                 presenter.getAvailableCurrencies()
-                ));
+        ));
     }
 
     @Override
@@ -100,7 +122,66 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (photoUri != null) {
+            outState.putString(KEY_PHOTO_URI, photoUri);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            photoUri = savedInstanceState.getString(KEY_PHOTO_URI);
+            imgAccountImage.setImageURI(Uri.parse(photoUri));
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CONTACT_PICKER_RESULT) {
+                Uri contactUri = data.getData();
+                Cursor contactCursor = getActivity()
+                        .getContentResolver()
+                        .query(
+                                contactUri,
+                                new String[] {
+                                        ContactsContract.Contacts.DISPLAY_NAME,
+                                        ContactsContract.Contacts.PHOTO_URI
+                                },
+                                null,
+                                null,
+                                null
+                        );
+                if (contactCursor != null && contactCursor.moveToFirst()) {
+                    int displayNameColumn = contactCursor
+                            .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+                    int photoUriColumn = contactCursor
+                            .getColumnIndex(ContactsContract.Contacts.PHOTO_URI);
+                    String displayName = contactCursor.getString(displayNameColumn);
+                    photoUri = contactCursor.getString(photoUriColumn);
+                    contactCursor.close();
+                    if (displayName != null) {
+                        edtAccountName.setText(displayName);
+                    }
+                    if (photoUri != null) {
+                        imgAccountImage.setImageURI(Uri.parse(photoUri));
+                    } else {
+                        imgAccountImage.setImageURI(null);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+    @Override
     public void close() {
+        getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
     }
 
@@ -145,5 +226,10 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     @Override
     public void setAccountNameError() {
         edtAccountName.setError(getResources().getString(R.string.error_must_enter_account_name));
+    }
+
+    @Override
+    public String getImageUri() {
+        return photoUri;
     }
 }

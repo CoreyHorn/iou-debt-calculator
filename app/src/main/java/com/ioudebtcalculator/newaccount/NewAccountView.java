@@ -12,9 +12,9 @@ public interface NewAccountView {
     String getNameEntered();
     String getCurrencyCode();
     String getDescriptionEntered();
+    String getImageUri();
 
     void setAmountError();
     void setBorrowOrLoanError();
     void setAccountNameError();
-
 }

@@ -31,6 +31,7 @@ public class AppModule {
         return application;
     }
 
+    //TODO: Scope these two different providers. Scope the raw SQLiteImpl to the repo package.
     @Provides @Singleton
     public SQLiteImpl provideSQLiteImpl(Context context) {
         return new SQLiteImpl(context);
