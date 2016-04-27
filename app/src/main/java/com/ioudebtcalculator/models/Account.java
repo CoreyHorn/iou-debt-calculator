@@ -16,8 +16,13 @@ public class Account {
     private Long dueDateTimestamp;
     private boolean deleted = false;
 
-    public Account(String currentBalance, String currencyCode, String name, String imageUri,
-                   String description, long createdTimestamp, Long dueDateTimestamp) {
+    public Account(String currentBalance,
+                   String currencyCode,
+                   String name,
+                   String imageUri,
+                   String description,
+                   long createdTimestamp,
+                   Long dueDateTimestamp) {
         this.currentBalance = currentBalance;
         this.currencyCode = currencyCode;
         this.name = name;
@@ -27,8 +32,14 @@ public class Account {
         this.dueDateTimestamp = dueDateTimestamp;
     }
 
-    public Account(int id, String currentBalance, String currencyCode, String name, String imageUri,
-                   String description, long createdTimestamp, long dueDateTimestamp,
+    public Account(int id,
+                   String currentBalance,
+                   String currencyCode,
+                   String name,
+                   String imageUri,
+                   String description,
+                   long createdTimestamp,
+                   long dueDateTimestamp,
                    boolean deleted) {
         this.id = id;
         this.currentBalance = currentBalance;
@@ -122,7 +133,6 @@ public class Account {
         contentValues.put(SQLiteImpl.FIELD_DESCRIPTION, getDescription());
         contentValues.put(SQLiteImpl.FIELD_CREATED_TIMESTAMP, getCreatedTimestamp());
         contentValues.put(SQLiteImpl.FIELD_DUE_DATE_TIMESTAMP, getDueDateTimestamp());
-        //TODO: May need to refactor this next line based on boolean handling.
         contentValues.put(SQLiteImpl.FIELD_DELETED, isDeleted());
         return contentValues;
     }

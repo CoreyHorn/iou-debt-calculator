@@ -23,7 +23,7 @@ public class AccountListAdapter extends RecyclerView.Adapter {
         switch (viewType) {
             default:
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.default_account_view, parent, false);
+                        .inflate(R.layout.view_default_account, parent, false);
                 return new DefaultAccountViewHolder(view);
         }
     }

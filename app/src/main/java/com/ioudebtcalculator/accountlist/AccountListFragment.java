@@ -56,7 +56,7 @@ public class AccountListFragment extends Fragment implements AccountListView {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.accountlist, container, false);
+        View view = inflater.inflate(R.layout.fragment_account_list, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rcyAccountList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(accountListAdapter);
