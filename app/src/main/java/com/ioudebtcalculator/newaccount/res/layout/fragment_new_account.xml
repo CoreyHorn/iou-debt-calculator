@@ -34,6 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:singleLine="true"
             android:hint="@string/new_account_account_name_hint"
             android:id="@+id/edtAccountName" />
 
@@ -72,6 +73,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/llyAmount"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
         android:hint="@string/new_transaction_description_hint"/>
 
     <ImageView
@@ -80,6 +83,19 @@
         android:background="@color/colorAccent"
         android:layout_width="50dp"
         android:layout_height="50dp" />
+
+    <CheckBox
+        android:id="@+id/chkDueDate"
+        android:text="@string/new_account_due_date"
+        android:layout_below="@id/imgAccountImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <DatePicker
+        android:layout_below="@id/chkDueDate"
+        android:calendarViewShown="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 
     <android.support.design.widget.CoordinatorLayout

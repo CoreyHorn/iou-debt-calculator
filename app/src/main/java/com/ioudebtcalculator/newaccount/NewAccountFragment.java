@@ -1,6 +1,7 @@
 package com.ioudebtcalculator.newaccount;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,19 +10,26 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.R;
+
+import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -41,6 +49,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     private Spinner spnCurrency;
     private EditText edtDescription;
     private ImageView imgAccountImage;
+    private CheckBox chkDueDate;
     private FloatingActionButton btnSaveAccount;
 
     private String photoUri;
@@ -66,6 +75,44 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
             Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
                     ContactsContract.Contacts.CONTENT_URI);
             startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+        }
+    };
+
+    private DatePickerDialog.OnDateSetListener onDateSetListener =
+            new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            Calendar dueDate = Calendar.getInstance();
+            dueDate.set(Calendar.YEAR, year);
+            dueDate.set(Calendar.MONTH, monthOfYear);
+            dueDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        }
+    };
+
+    private View.OnClickListener pickDueDateListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v instanceof CheckBox) {
+                if (!((CheckBox) v).isChecked()) {
+                    return;
+                }
+            }
+            DueDatePickerDialog dueDatePickerDialog = new DueDatePickerDialog();
+            dueDatePickerDialog.setListener(onDateSetListener);
+            dueDatePickerDialog.show(getFragmentManager(), "due_date_tag");
+        }
+    };
+
+    private EditText.OnEditorActionListener doneActionListener =
+            new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                btnSaveAccount.performClick();
+                return true;
+            }
+            return false;
         }
     };
 
@@ -95,12 +142,15 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         spnCurrency = (Spinner) view.findViewById(R.id.spnCurrency);
         edtDescription = (EditText) view.findViewById(R.id.edtDescription);
         imgAccountImage = (ImageView) view.findViewById(R.id.imgAccountImage);
+        chkDueDate = (CheckBox) view.findViewById(R.id.chkDueDate);
         btnSaveAccount = (FloatingActionButton) view.findViewById(R.id.saveAccountFab);
 
         btnSaveAccount.setOnClickListener(saveAccountListener);
         rdbBorrow.setOnClickListener(clearRadioErrorListener);
         rdbLoan.setOnClickListener(clearRadioErrorListener);
         btnAddContact.setOnClickListener(pickContactListener);
+        edtDescription.setOnEditorActionListener(doneActionListener);
+        chkDueDate.setOnClickListener(pickDueDateListener);
 
         return view;
     }
@@ -134,7 +184,9 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             photoUri = savedInstanceState.getString(KEY_PHOTO_URI);
-            imgAccountImage.setImageURI(Uri.parse(photoUri));
+            if (photoUri != null) {
+                imgAccountImage.setImageURI(Uri.parse(photoUri));
+            }
         }
     }
 
