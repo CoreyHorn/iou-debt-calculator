@@ -10,6 +10,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
 
     private static final int CONTACT_PICKER_RESULT = 0;
     private static final String KEY_PHOTO_URI = "key_photo_uri";
+    private static final String KEY_CURRENT_DUE_DATE = "key_current_due_date";
 
     @Inject NewAccountPresenter presenter;
 
@@ -50,9 +52,12 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     private EditText edtDescription;
     private ImageView imgAccountImage;
     private CheckBox chkDueDate;
+    private TextView txtCurrentDueDate;
+    private ImageButton btnChooseDueDate;
     private FloatingActionButton btnSaveAccount;
 
     private String photoUri;
+    private long currentDueDate;
 
     private View.OnClickListener saveAccountListener = new View.OnClickListener() {
         @Override
@@ -86,7 +91,9 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
             dueDate.set(Calendar.YEAR, year);
             dueDate.set(Calendar.MONTH, monthOfYear);
             dueDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
+            java.text.DateFormat dateFormat = DateFormat.getDateFormat(getActivity());
+            currentDueDate = dueDate.getTimeInMillis();
+            txtCurrentDueDate.setText(dateFormat.format(dueDate.getTime()));
         }
     };
 
@@ -143,6 +150,8 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         edtDescription = (EditText) view.findViewById(R.id.edtDescription);
         imgAccountImage = (ImageView) view.findViewById(R.id.imgAccountImage);
         chkDueDate = (CheckBox) view.findViewById(R.id.chkDueDate);
+        txtCurrentDueDate = (TextView) view.findViewById(R.id.txtCurrentDueDate);
+        btnChooseDueDate = (ImageButton) view.findViewById(R.id.btnChooseDueDate);
         btnSaveAccount = (FloatingActionButton) view.findViewById(R.id.saveAccountFab);
 
         btnSaveAccount.setOnClickListener(saveAccountListener);
@@ -151,6 +160,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         btnAddContact.setOnClickListener(pickContactListener);
         edtDescription.setOnEditorActionListener(doneActionListener);
         chkDueDate.setOnClickListener(pickDueDateListener);
+        btnChooseDueDate.setOnClickListener(pickDueDateListener);
 
         return view;
     }
@@ -177,6 +187,9 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         if (photoUri != null) {
             outState.putString(KEY_PHOTO_URI, photoUri);
         }
+        if (currentDueDate != 0f) {
+            outState.putLong(KEY_CURRENT_DUE_DATE, currentDueDate);
+        }
     }
 
     @Override
@@ -186,6 +199,13 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
             photoUri = savedInstanceState.getString(KEY_PHOTO_URI);
             if (photoUri != null) {
                 imgAccountImage.setImageURI(Uri.parse(photoUri));
+            }
+            currentDueDate = savedInstanceState.getLong(KEY_CURRENT_DUE_DATE, 0L);
+            if (currentDueDate != 0L) {
+                java.text.DateFormat dateFormat = DateFormat.getDateFormat(getActivity());
+                Calendar dueDate = Calendar.getInstance();
+                dueDate.setTimeInMillis(currentDueDate);
+                txtCurrentDueDate.setText(dateFormat.format(dueDate.getTime()));
             }
         }
     }
@@ -227,9 +247,6 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
             }
         }
     }
-
-
-
 
     @Override
     public void close() {
@@ -283,5 +300,10 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     @Override
     public String getImageUri() {
         return photoUri;
+    }
+
+    @Override
+    public long getDueDate() {
+        return currentDueDate;
     }
 }
