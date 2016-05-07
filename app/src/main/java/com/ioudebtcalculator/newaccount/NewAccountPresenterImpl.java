@@ -64,7 +64,6 @@ public class NewAccountPresenterImpl implements NewAccountPresenter {
             error = true;
         }
         if (!error) {
-            //TODO: Handle Due Date entry.
             Account account = new Account(
                     view.getAmountEntered(),
                     view.getCurrencyCode(),
@@ -72,7 +71,7 @@ public class NewAccountPresenterImpl implements NewAccountPresenter {
                     view.getImageUri(),
                     view.getDescriptionEntered(),
                     System.currentTimeMillis(),
-                    null
+                    view.getDueDate()
             );
             dataRepository.saveAccount(account);
             view.close();

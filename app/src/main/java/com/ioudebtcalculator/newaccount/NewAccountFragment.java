@@ -57,7 +57,7 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
     private FloatingActionButton btnSaveAccount;
 
     private String photoUri;
-    private long currentDueDate;
+    private long currentDueDate = 0L;
 
     private View.OnClickListener saveAccountListener = new View.OnClickListener() {
         @Override

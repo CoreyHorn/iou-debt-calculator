@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.R;
@@ -165,9 +166,12 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_ACCOUNT_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                int selectionIndex = spnAccountName.getAdapter().getCount();
-                if (selectionIndex >= 0) {
-                    forceSelectedAccountPosition = selectionIndex;
+                SpinnerAdapter spinnerAdapter = spnAccountName.getAdapter();
+                if (spinnerAdapter != null) {
+                    int selectionIndex = spinnerAdapter.getCount();
+                    if (selectionIndex >= 0) {
+                        forceSelectedAccountPosition = selectionIndex;
+                    }
                 }
             }
         }
