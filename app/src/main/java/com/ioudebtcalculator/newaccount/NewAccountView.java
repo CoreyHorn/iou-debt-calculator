@@ -13,6 +13,7 @@ public interface NewAccountView {
     String getCurrencyCode();
     String getDescriptionEntered();
     String getImageUri();
+    long getDueDate();
 
     void setAmountError();
     void setBorrowOrLoanError();

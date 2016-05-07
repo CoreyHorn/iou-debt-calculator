@@ -17,6 +17,7 @@
 
     <string name="new_account_account_name_hint">Enter Account Name</string>
     <string name="new_account_button_content_description">Click to Create a New Account</string>
+    <string name="new_account_due_date">Due Date</string>
 
     <string name="error_borrow_or_loan">Must choose Borrow or Loan</string>
     <string name="error_must_enter_amount">Must enter an amount</string>
