@@ -10,8 +10,8 @@ public interface NewTransactionView {
     void close();
 
     int getBorrowOrLoanCheckedId();
-
     String getAmountEntered();
+    int getSelectedAccountId();
 
     void setBorrowOrLoanError();
     void setTransactionAmountError();

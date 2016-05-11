@@ -38,7 +38,6 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
          * TODO: Convert this method to return the list of currency symbols / strings
          * returned from SharedPreferences.
          */
-
         Set<Currency> currencySet = Currency.getAvailableCurrencies();
         List<String> currencySymbols = new ArrayList<>();
         for (Currency currency : currencySet) {
@@ -49,11 +48,21 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
 
     @Override
     public void validateInputAndSave() {
+        boolean error = false;
         if (view.getBorrowOrLoanCheckedId() == -1) {
             view.setBorrowOrLoanError();
+            error = true;
         }
         if (view.getAmountEntered().equals("")) {
             view.setTransactionAmountError();
+            error = true;
+        }
+        if (!error) {
+//            Transaction transaction = new Transaction(
+//                view.getSelectedAccountId(),
+//                view.getAmountEntered(),
+//                view.get
+//            );
         }
         //TODO: Handle saving the transaction and closing the fragment.
     }

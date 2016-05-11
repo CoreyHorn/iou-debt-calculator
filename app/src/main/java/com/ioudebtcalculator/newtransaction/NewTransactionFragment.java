@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.R;
@@ -52,19 +51,21 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     private CoordinatorLayout fabLayout;
     private ImageButton imbNewAccount;
 
-    private int forceSelectedAccountPosition = -1;
+    private boolean receivedAccountResult = false;
+    private List<Account> accounts;
 
     private DataRepositoryListener dataRepositoryListener = new DataRepositoryListener() {
         @Override
         public void onAccountListAvailable(List<Account> accounts) {
             if (spnAccountName != null) {
+                setAccounts(accounts);
                 AccountNameSpinnerAdapter adapter = new AccountNameSpinnerAdapter(accounts,
                         getContext());
                 spnAccountName.setAdapter(adapter);
-                if (forceSelectedAccountPosition == -1) {
-                    setSpinnerToDefaultAccount();
+                if (receivedAccountResult) {
+                    spnAccountName.setSelection(adapter.getCount());
                 } else {
-                    spnAccountName.setSelection(forceSelectedAccountPosition);
+                    setSpinnerToDefaultAccount();
                 }
             }
         }
@@ -166,13 +167,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_ACCOUNT_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                SpinnerAdapter spinnerAdapter = spnAccountName.getAdapter();
-                if (spinnerAdapter != null) {
-                    int selectionIndex = spinnerAdapter.getCount();
-                    if (selectionIndex >= 0) {
-                        forceSelectedAccountPosition = selectionIndex;
-                    }
-                }
+                receivedAccountResult = true;
             }
         }
     }
@@ -195,6 +190,15 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public String getAmountEntered() {
         return edtAmount.getText().toString();
+    }
+
+    @Override
+    public int getSelectedAccountId() {
+        int selectedPosition = spnAccountName.getSelectedItemPosition();
+        if (accounts != null && selectedPosition != -1) {
+            return accounts.get(selectedPosition).getId();
+        }
+        return -1;
     }
 
     @Override
@@ -223,5 +227,9 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
                 }
             }
         }
+    }
+
+    private void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 }
