@@ -1,6 +1,10 @@
 package com.ioudebtcalculator.newtransaction;
 
+import android.util.Log;
+
 import com.ioudebtcalculator.App;
+import com.ioudebtcalculator.network.CurrencyConverterService;
+import com.ioudebtcalculator.network.CurrencyResult;
 import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.DataRepositoryListener;
 
@@ -10,6 +14,12 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NewTransactionPresenterImpl implements NewTransactionPresenter {
 
@@ -58,6 +68,14 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
             error = true;
         }
         if (!error) {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(CurrencyConverterService.BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            CurrencyConverterService currencyConverterService = retrofit
+                .create(CurrencyConverterService.class);
+            Call<CurrencyResult> currencyResultCall = currencyConverterService.getCurrencyResult("USD", "DKK");
+            currencyResultCall.enqueue(new RetroListener());
 //            Transaction transaction = new Transaction(
 //                view.getSelectedAccountId(),
 //                view.getAmountEntered(),
@@ -65,5 +83,23 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
 //            );
         }
         //TODO: Handle saving the transaction and closing the fragment.
+    }
+
+    private class RetroListener implements Callback<CurrencyResult> {
+
+        @Override
+        public void onResponse(Call<CurrencyResult> call, Response<CurrencyResult> response) {
+            if (response.isSuccess()) {
+                CurrencyResult result = response.body();
+                for (String key : result.rates.keySet()) {
+                    Log.d("stuff", "Key: " + key + ", Value: " + result.rates.get(key));
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<CurrencyResult> call, Throwable t) {
+
+        }
     }
 }
