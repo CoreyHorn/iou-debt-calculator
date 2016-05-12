@@ -20,6 +20,7 @@
     <string name="error_borrow_or_loan">Must choose Borrow or Loan</string>
     <string name="error_must_enter_amount">Must enter an amount</string>
     <string name="error_must_enter_account_name">Must enter an Account Name</string>
+    <string name="error_must_choose_account">Must choose an Account</string>
 
     <string-array name="available_currencies">
         <item>AUD</item>

@@ -7,8 +7,6 @@ import com.ioudebtcalculator.accountlist.AccountListPresenter;
 import com.ioudebtcalculator.accountlist.AccountListPresenterImpl;
 import com.ioudebtcalculator.newaccount.NewAccountPresenter;
 import com.ioudebtcalculator.newaccount.NewAccountPresenterImpl;
-import com.ioudebtcalculator.newtransaction.NewTransactionPresenter;
-import com.ioudebtcalculator.newtransaction.NewTransactionPresenterImpl;
 import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.sqlite.SQLiteImpl;
 
@@ -40,11 +38,6 @@ public class AppModule {
     @Provides @Singleton
     public DataRepository provideDataRepository(Context context) {
         return provideSQLiteImpl(context);
-    }
-
-    @Provides
-    public NewTransactionPresenter provideNewTransactionPresenter() {
-        return new NewTransactionPresenterImpl();
     }
 
     @Provides

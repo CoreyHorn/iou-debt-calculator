@@ -1,8 +1,5 @@
 package com.ioudebtcalculator.newtransaction;
 
-import android.util.Log;
-
-import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.network.CurrencyConverterService;
 import com.ioudebtcalculator.network.CurrencyResult;
 import com.ioudebtcalculator.repository.DataRepository;
@@ -13,23 +10,20 @@ import java.util.Currency;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NewTransactionPresenterImpl implements NewTransactionPresenter {
 
-    @Inject
-    DataRepository dataRepository;
-
     private NewTransactionView view;
+    private DataRepository dataRepository;
+    private CurrencyConverterService currencyConverterService;
 
-    public NewTransactionPresenterImpl() {
-        App.getInstance().getAppComponent().inject(this);
+    public NewTransactionPresenterImpl(DataRepository dataRepository,
+                                       CurrencyConverterService currencyConverterService) {
+        this.dataRepository = dataRepository;
+        this.currencyConverterService = currencyConverterService;
     }
 
     @Override
@@ -67,39 +61,36 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
             view.setTransactionAmountError();
             error = true;
         }
-        if (!error) {
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(CurrencyConverterService.BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            CurrencyConverterService currencyConverterService = retrofit
-                .create(CurrencyConverterService.class);
-            Call<CurrencyResult> currencyResultCall = currencyConverterService.getCurrencyResult("USD", "DKK");
-            currencyResultCall.enqueue(new RetroListener());
-//            Transaction transaction = new Transaction(
-//                view.getSelectedAccountId(),
-//                view.getAmountEntered(),
-//                view.get
-//            );
+        if (view.getSelectedAccount() == null) {
+            view.setSelectedAccountError();
+            error = true;
         }
-        //TODO: Handle saving the transaction and closing the fragment.
+        if (!error) {
+            if (view.getSelectedAccount().getCurrencyCode().equals(view.getSelectedCurrency())) {
+                //TODO: Create method to \/\/\/
+                //TODO: Handle instant creation of Transaction, add to database, close fragment.
+            } else {
+                Call<CurrencyResult> currencyResultCall = currencyConverterService
+                        .getCurrencyResult(view.getSelectedCurrency(),
+                                view.getSelectedAccount().getCurrencyCode());
+                currencyResultCall.enqueue(new CurrencyConversionListener());
+            }
+        }
     }
 
-    private class RetroListener implements Callback<CurrencyResult> {
+    private class CurrencyConversionListener implements Callback<CurrencyResult> {
 
         @Override
         public void onResponse(Call<CurrencyResult> call, Response<CurrencyResult> response) {
             if (response.isSuccess()) {
                 CurrencyResult result = response.body();
-                for (String key : result.rates.keySet()) {
-                    Log.d("stuff", "Key: " + key + ", Value: " + result.rates.get(key));
-                }
+                //TODO: Create the transaction, save to database, close fragment.
             }
         }
 
         @Override
         public void onFailure(Call<CurrencyResult> call, Throwable t) {
-
+            //TODO: Handle notifying the user of error and allow retry attempts.
         }
     }
 }

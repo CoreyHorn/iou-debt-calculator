@@ -1,8 +1,8 @@
 package com.ioudebtcalculator.newtransaction;
 
-public interface NewTransactionView {
+import com.ioudebtcalculator.models.Account;
 
-    void showErrorMessage(String errorMessage);
+public interface NewTransactionView {
 
     /**
      * Used to close the view.
@@ -11,8 +11,10 @@ public interface NewTransactionView {
 
     int getBorrowOrLoanCheckedId();
     String getAmountEntered();
-    int getSelectedAccountId();
+    Account getSelectedAccount();
+    String getSelectedCurrency();
 
     void setBorrowOrLoanError();
     void setTransactionAmountError();
+    void setSelectedAccountError();
 }

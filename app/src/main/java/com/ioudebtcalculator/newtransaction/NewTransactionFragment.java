@@ -117,7 +117,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((App) getActivity().getApplication()).getAppComponent().inject(this);
+        ((App) getActivity().getApplication()).getNewTransactionComponent().inject(this);
         Bundle arguments = getArguments();
         if (arguments != null) {
             accountId = arguments.getInt(KEY_ACCOUNT_ID);
@@ -150,7 +150,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<String>(getContext(),
+        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_item,
                 presenter.getAvailableCurrencies());
         spnCurrency.setAdapter(currencyAdapter);
@@ -164,6 +164,12 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     }
 
     @Override
+    public void onDestroy() {
+        ((App) getActivity().getApplication()).releaseNewTransactionComponent();
+        super.onDestroy();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_ACCOUNT_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
@@ -172,10 +178,10 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         }
     }
 
-    @Override
-    public void showErrorMessage(String errorMessage) {
-        Snackbar.make(fabLayout, errorMessage, Snackbar.LENGTH_LONG).show();
-    }
+//    @Override
+//    public void showErrorMessage(String errorMessage) {
+//        Snackbar.make(fabLayout, errorMessage, Snackbar.LENGTH_LONG).show();
+//    }
 
     @Override
     public void close() {
@@ -193,12 +199,17 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     }
 
     @Override
-    public int getSelectedAccountId() {
+    public Account getSelectedAccount() {
         int selectedPosition = spnAccountName.getSelectedItemPosition();
         if (accounts != null && selectedPosition != -1) {
-            return accounts.get(selectedPosition).getId();
+            return accounts.get(selectedPosition);
         }
-        return -1;
+        return null;
+    }
+
+    @Override
+    public String getSelectedCurrency() {
+        return spnCurrency.getSelectedItem().toString();
     }
 
     @Override
@@ -214,6 +225,12 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     public void setTransactionAmountError() {
         edtAmount.setError(getResources()
             .getString(R.string.error_must_enter_amount));
+    }
+
+    @Override
+    public void setSelectedAccountError() {
+        Snackbar.make(fabLayout, getResources().getString(R.string.error_must_choose_account),
+                Snackbar.LENGTH_LONG).show();
     }
 
     private void setSpinnerToDefaultAccount() {
