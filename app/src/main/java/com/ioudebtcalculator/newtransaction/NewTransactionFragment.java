@@ -48,6 +48,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     private RadioButton rdbLoan;
     private RadioButton rdbBorrow;
     private EditText edtAmount;
+    private EditText edtDescription;
     private CoordinatorLayout fabLayout;
     private ImageButton imbNewAccount;
 
@@ -59,11 +60,17 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         public void onAccountListAvailable(List<Account> accounts) {
             if (spnAccountName != null) {
                 setAccounts(accounts);
-                AccountNameSpinnerAdapter adapter = new AccountNameSpinnerAdapter(accounts,
-                        getContext());
-                spnAccountName.setAdapter(adapter);
+                AccountNameSpinnerAdapter adapter = (AccountNameSpinnerAdapter)
+                        spnAccountName.getAdapter();
+                if (adapter == null) {
+                    adapter = new AccountNameSpinnerAdapter(accounts,
+                            getContext());
+                    spnAccountName.setAdapter(adapter);
+                } else {
+                    adapter.setAccounts(accounts);
+                }
                 if (receivedAccountResult) {
-                    spnAccountName.setSelection(adapter.getCount());
+                    spnAccountName.setSelection(adapter.getCount() - 1);
                 } else {
                     setSpinnerToDefaultAccount();
                 }
@@ -136,6 +143,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         rdbBorrow = (RadioButton) view.findViewById(R.id.rdbBorrow);
         rdbLoan = (RadioButton) view.findViewById(R.id.rdbLoan);
         edtAmount = (EditText) view.findViewById(R.id.edtAmount);
+        edtDescription = (EditText) view.findViewById(R.id.edtDescription);
         imbNewAccount = (ImageButton) view.findViewById(R.id.btnNewAccount);
         fabLayout = (CoordinatorLayout) view.findViewById(R.id.fabLayout);
         FloatingActionButton floatingActionButton = (FloatingActionButton) view
@@ -152,7 +160,8 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         super.onViewCreated(view, savedInstanceState);
         ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_item,
-                presenter.getAvailableCurrencies());
+                getResources().getStringArray(R.array.available_currencies));
+        //TODO: Pull these currencies from Preferences.
         spnCurrency.setAdapter(currencyAdapter);
     }
 
@@ -177,11 +186,6 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
             }
         }
     }
-
-//    @Override
-//    public void showErrorMessage(String errorMessage) {
-//        Snackbar.make(fabLayout, errorMessage, Snackbar.LENGTH_LONG).show();
-//    }
 
     @Override
     public void close() {
@@ -213,6 +217,11 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     }
 
     @Override
+    public String getDescription() {
+        return edtDescription.getText().toString();
+    }
+
+    @Override
     public void setBorrowOrLoanError(){
         Resources resources = getResources();
         rdbLoan.setError(resources
@@ -231,6 +240,20 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     public void setSelectedAccountError() {
         Snackbar.make(fabLayout, getResources().getString(R.string.error_must_choose_account),
                 Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setConversionError() {
+        Snackbar.make(fabLayout, getResources().getString(R.string.error_conversion),
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getResources().getString(R.string.new_transaction_retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                presenter.validateInputAndSave();
+                            }
+                        })
+        .show();
     }
 
     private void setSpinnerToDefaultAccount() {

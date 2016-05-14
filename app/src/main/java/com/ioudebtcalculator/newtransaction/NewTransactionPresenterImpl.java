@@ -1,14 +1,13 @@
 package com.ioudebtcalculator.newtransaction;
 
+import com.ioudebtcalculator.models.Transaction;
 import com.ioudebtcalculator.network.CurrencyConverterService;
 import com.ioudebtcalculator.network.CurrencyResult;
 import com.ioudebtcalculator.repository.DataRepository;
 import com.ioudebtcalculator.repository.DataRepositoryListener;
+import com.ioudebtcalculator.repository.sqlite.DatabaseOperationListener;
 
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,6 +18,13 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
     private NewTransactionView view;
     private DataRepository dataRepository;
     private CurrencyConverterService currencyConverterService;
+
+    private DatabaseOperationListener operationListener = new DatabaseOperationListener() {
+        @Override
+        public void onOperationComplete() {
+            view.close();
+        }
+    };
 
     public NewTransactionPresenterImpl(DataRepository dataRepository,
                                        CurrencyConverterService currencyConverterService) {
@@ -34,20 +40,6 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
     @Override
     public void getAccounts(DataRepositoryListener listener) {
         dataRepository.getAccounts(listener);
-    }
-
-    @Override
-    public List<String> getAvailableCurrencies() {
-        /**
-         * TODO: Convert this method to return the list of currency symbols / strings
-         * returned from SharedPreferences.
-         */
-        Set<Currency> currencySet = Currency.getAvailableCurrencies();
-        List<String> currencySymbols = new ArrayList<>();
-        for (Currency currency : currencySet) {
-            currencySymbols.add(currency.getSymbol());
-        }
-        return currencySymbols;
     }
 
     @Override
@@ -67,8 +59,7 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
         }
         if (!error) {
             if (view.getSelectedAccount().getCurrencyCode().equals(view.getSelectedCurrency())) {
-                //TODO: Create method to \/\/\/
-                //TODO: Handle instant creation of Transaction, add to database, close fragment.
+                createAndSaveTransaction(view.getAmountEntered());
             } else {
                 Call<CurrencyResult> currencyResultCall = currencyConverterService
                         .getCurrencyResult(view.getSelectedCurrency(),
@@ -78,19 +69,40 @@ public class NewTransactionPresenterImpl implements NewTransactionPresenter {
         }
     }
 
+    private void createAndSaveTransaction(String postConversionAmount) {
+        Transaction transaction = new Transaction(
+                view.getSelectedAccount().getId(),
+                view.getAmountEntered(),
+                view.getSelectedCurrency(),
+                postConversionAmount,
+                view.getDescription(),
+                System.currentTimeMillis()
+        );
+        dataRepository.saveTransaction(transaction, operationListener);
+        String newBalance = new BigDecimal(view.getSelectedAccount().getCurrentBalance())
+                .add(new BigDecimal(transaction.getPostConversionAmount())).toString();
+        dataRepository.setAccountBalance(view.getSelectedAccount(), newBalance);
+        view.close();
+    }
+
     private class CurrencyConversionListener implements Callback<CurrencyResult> {
 
         @Override
         public void onResponse(Call<CurrencyResult> call, Response<CurrencyResult> response) {
             if (response.isSuccess()) {
                 CurrencyResult result = response.body();
-                //TODO: Create the transaction, save to database, close fragment.
+                Double rate = result.getRates().get(view.getSelectedAccount()
+                        .getCurrencyCode());
+                BigDecimal conversionRate = BigDecimal.valueOf(rate);
+                BigDecimal postConversionAmount = new BigDecimal(view.getAmountEntered())
+                        .multiply(conversionRate);
+                createAndSaveTransaction(postConversionAmount.toString());
             }
         }
 
         @Override
         public void onFailure(Call<CurrencyResult> call, Throwable t) {
-            //TODO: Handle notifying the user of error and allow retry attempts.
+            view.setConversionError();
         }
     }
 }

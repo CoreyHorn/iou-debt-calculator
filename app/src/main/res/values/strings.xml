@@ -12,6 +12,7 @@
     <string name="new_transaction_start_date">Start Date</string>
     <string name="new_transaction_save_transaction">Save Transaction</string>
     <string name="new_transaction_description_hint">Description / Note</string>
+    <string name="new_transaction_retry">Retry</string>
 
     <string name="new_account_account_name_hint">Enter Account Name</string>
     <string name="new_account_button_content_description">Click to Create a New Account</string>
@@ -21,6 +22,7 @@
     <string name="error_must_enter_amount">Must enter an amount</string>
     <string name="error_must_enter_account_name">Must enter an Account Name</string>
     <string name="error_must_choose_account">Must choose an Account</string>
+    <string name="error_conversion">Conversion Error</string>
 
     <string-array name="available_currencies">
         <item>AUD</item>

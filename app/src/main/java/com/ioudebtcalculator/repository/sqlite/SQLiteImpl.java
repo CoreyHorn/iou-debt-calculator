@@ -217,7 +217,9 @@ public class SQLiteImpl extends SQLiteOpenHelper implements DataRepository {
      * @param transaction Transaction object to save.
      */
     @Override
-    public void saveTransaction(Transaction transaction) {
-        new InsertTransactionsTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, transaction);
+    public void saveTransaction(Transaction transaction,
+                                DatabaseOperationListener operationListener) {
+        new InsertTransactionsTask(operationListener)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, transaction);
     }
 }

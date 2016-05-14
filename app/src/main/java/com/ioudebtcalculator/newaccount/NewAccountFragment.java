@@ -171,8 +171,9 @@ public class NewAccountFragment extends Fragment implements NewAccountView {
         spnCurrency.setAdapter(new ArrayAdapter<>(
                 getContext(),
                 android.R.layout.simple_spinner_item,
-                presenter.getAvailableCurrencies()
+                getResources().getStringArray(R.array.available_currencies)
         ));
+        //TODO: Pull these currencies from Preferences.
     }
 
     @Override

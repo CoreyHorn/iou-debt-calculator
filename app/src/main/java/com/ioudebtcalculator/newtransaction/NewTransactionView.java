@@ -4,17 +4,16 @@ import com.ioudebtcalculator.models.Account;
 
 public interface NewTransactionView {
 
-    /**
-     * Used to close the view.
-     */
     void close();
 
     int getBorrowOrLoanCheckedId();
     String getAmountEntered();
     Account getSelectedAccount();
     String getSelectedCurrency();
+    String getDescription();
 
     void setBorrowOrLoanError();
     void setTransactionAmountError();
     void setSelectedAccountError();
+    void setConversionError();
 }
