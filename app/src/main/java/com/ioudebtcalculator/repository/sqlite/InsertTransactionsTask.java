@@ -13,8 +13,11 @@ public class InsertTransactionsTask extends AsyncTask<Transaction, Void, Void> {
     @Inject
     SQLiteImpl sqLite;
 
-    public InsertTransactionsTask() {
+    DatabaseOperationListener operationListener;
+
+    public InsertTransactionsTask(DatabaseOperationListener operationListener) {
         App.getInstance().getAppComponent().inject(this);
+        this.operationListener = operationListener;
     }
 
     @Override
@@ -28,5 +31,11 @@ public class InsertTransactionsTask extends AsyncTask<Transaction, Void, Void> {
         database.endTransaction();
         sqLite.closeDatabase();
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        operationListener.onOperationComplete();
     }
 }

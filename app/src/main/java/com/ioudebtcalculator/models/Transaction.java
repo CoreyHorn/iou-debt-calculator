@@ -15,10 +15,13 @@ public class Transaction {
     private long createdTimestamp;
     private boolean deleted;
 
-    public Transaction(int accountId, String amount, String currencyCode, long createdTimestamp) {
+    public Transaction(int accountId, String amount, String currencyCode, String postConversionAmount,
+                       String description, long createdTimestamp) {
         this.accountId = accountId;
         this.amount = amount;
         this.currencyCode = currencyCode;
+        this.postConversionAmount = postConversionAmount;
+        this.description = description;
         this.createdTimestamp = createdTimestamp;
         this.deleted = false;
     }

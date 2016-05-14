@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import com.ioudebtcalculator.App;
 import com.ioudebtcalculator.R;
@@ -49,22 +48,31 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     private RadioButton rdbLoan;
     private RadioButton rdbBorrow;
     private EditText edtAmount;
+    private EditText edtDescription;
     private CoordinatorLayout fabLayout;
     private ImageButton imbNewAccount;
 
-    private int forceSelectedAccountPosition = -1;
+    private boolean receivedAccountResult = false;
+    private List<Account> accounts;
 
     private DataRepositoryListener dataRepositoryListener = new DataRepositoryListener() {
         @Override
         public void onAccountListAvailable(List<Account> accounts) {
             if (spnAccountName != null) {
-                AccountNameSpinnerAdapter adapter = new AccountNameSpinnerAdapter(accounts,
-                        getContext());
-                spnAccountName.setAdapter(adapter);
-                if (forceSelectedAccountPosition == -1) {
-                    setSpinnerToDefaultAccount();
+                setAccounts(accounts);
+                AccountNameSpinnerAdapter adapter = (AccountNameSpinnerAdapter)
+                        spnAccountName.getAdapter();
+                if (adapter == null) {
+                    adapter = new AccountNameSpinnerAdapter(accounts,
+                            getContext());
+                    spnAccountName.setAdapter(adapter);
                 } else {
-                    spnAccountName.setSelection(forceSelectedAccountPosition);
+                    adapter.setAccounts(accounts);
+                }
+                if (receivedAccountResult) {
+                    spnAccountName.setSelection(adapter.getCount() - 1);
+                } else {
+                    setSpinnerToDefaultAccount();
                 }
             }
         }
@@ -116,7 +124,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((App) getActivity().getApplication()).getAppComponent().inject(this);
+        ((App) getActivity().getApplication()).getNewTransactionComponent().inject(this);
         Bundle arguments = getArguments();
         if (arguments != null) {
             accountId = arguments.getInt(KEY_ACCOUNT_ID);
@@ -135,6 +143,7 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
         rdbBorrow = (RadioButton) view.findViewById(R.id.rdbBorrow);
         rdbLoan = (RadioButton) view.findViewById(R.id.rdbLoan);
         edtAmount = (EditText) view.findViewById(R.id.edtAmount);
+        edtDescription = (EditText) view.findViewById(R.id.edtDescription);
         imbNewAccount = (ImageButton) view.findViewById(R.id.btnNewAccount);
         fabLayout = (CoordinatorLayout) view.findViewById(R.id.fabLayout);
         FloatingActionButton floatingActionButton = (FloatingActionButton) view
@@ -149,9 +158,10 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<String>(getContext(),
+        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_item,
-                presenter.getAvailableCurrencies());
+                getResources().getStringArray(R.array.available_currencies));
+        //TODO: Pull these currencies from Preferences.
         spnCurrency.setAdapter(currencyAdapter);
     }
 
@@ -163,23 +173,18 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == NEW_ACCOUNT_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                SpinnerAdapter spinnerAdapter = spnAccountName.getAdapter();
-                if (spinnerAdapter != null) {
-                    int selectionIndex = spinnerAdapter.getCount();
-                    if (selectionIndex >= 0) {
-                        forceSelectedAccountPosition = selectionIndex;
-                    }
-                }
-            }
-        }
+    public void onDestroy() {
+        ((App) getActivity().getApplication()).releaseNewTransactionComponent();
+        super.onDestroy();
     }
 
     @Override
-    public void showErrorMessage(String errorMessage) {
-        Snackbar.make(fabLayout, errorMessage, Snackbar.LENGTH_LONG).show();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == NEW_ACCOUNT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                receivedAccountResult = true;
+            }
+        }
     }
 
     @Override
@@ -198,6 +203,25 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
     }
 
     @Override
+    public Account getSelectedAccount() {
+        int selectedPosition = spnAccountName.getSelectedItemPosition();
+        if (accounts != null && selectedPosition != -1) {
+            return accounts.get(selectedPosition);
+        }
+        return null;
+    }
+
+    @Override
+    public String getSelectedCurrency() {
+        return spnCurrency.getSelectedItem().toString();
+    }
+
+    @Override
+    public String getDescription() {
+        return edtDescription.getText().toString();
+    }
+
+    @Override
     public void setBorrowOrLoanError(){
         Resources resources = getResources();
         rdbLoan.setError(resources
@@ -212,6 +236,26 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
             .getString(R.string.error_must_enter_amount));
     }
 
+    @Override
+    public void setSelectedAccountError() {
+        Snackbar.make(fabLayout, getResources().getString(R.string.error_must_choose_account),
+                Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setConversionError() {
+        Snackbar.make(fabLayout, getResources().getString(R.string.error_conversion),
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getResources().getString(R.string.new_transaction_retry),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                presenter.validateInputAndSave();
+                            }
+                        })
+        .show();
+    }
+
     private void setSpinnerToDefaultAccount() {
         if (accountId != null) {
             for (int position = 0;
@@ -223,5 +267,9 @@ public class NewTransactionFragment extends Fragment implements NewTransactionVi
                 }
             }
         }
+    }
+
+    private void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 }

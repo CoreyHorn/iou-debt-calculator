@@ -23,6 +23,11 @@ public class AccountNameSpinnerAdapter extends BaseAdapter {
         this.context = context;
     }
 
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return accounts.size();
